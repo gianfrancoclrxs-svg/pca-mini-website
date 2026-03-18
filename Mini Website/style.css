@@ -1,0 +1,286 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui;
+  background: linear-gradient(135deg, #1aa108, #0d6d05);
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-frame {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+}
+
+.header {
+  color: white;
+  text-align: center;
+  padding: 15px;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.logo img {
+  width: 60px;
+  border-radius: 50%;
+}
+
+.section {
+  padding: 15px;
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #0d6d05;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 90px;
+  cursor: pointer;
+}
+
+.chat-icon img {
+  width: 100%;
+}
+
+.chat-bubble {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: rgba(13,109,5,0.9);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeBubble 10s forwards;
+}
+
+@keyframes fadeBubble {
+  0% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(-5px); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.chat-box {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: #fff;
+  border-radius: 15px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.chat-header {
+  background: #0d6d05;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.message {
+  margin: 5px 0;
+  max-width: 80%;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.user {
+  background: #dcf8c6;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #f1f1f1;
+  align-self: flex-start;
+}
+
+.faq-btn {
+  background: rgba(13,109,5,0.1);
+  color: #0d6d05;
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.ripple {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.5s linear;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.grid-menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 15px;
+}
+
+.grid-btn {
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  border-radius: 15px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.grid-btn i {
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.grid-btn p {
+  font-size: 13px;
+}
+
+.grid-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+.post-card {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: 0.3s;
+}
+
+.post-card:hover {
+  transform: scale(1.02);
+}
+
+.post-card iframe {
+  width: 100%;
+  height: 250px;
+  border: none;
+  border-radius: 15px;
+}
+
+.fb-card {
+  padding: 10px;
+  border-radius: 0px;
+  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  transition: 0.3s;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.fb-card:hover {
+  transform: translateY(-5px) scale(1.01);
+}
+
+.fb-page {
+  width: 100% !important;
+}
+
+.fb-page span iframe {
+  border-radius: 15px !important;
+}
+
+.logo img {
+  width: 100px;
+  height: auto;
+  border-radius: 0;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.logo img:hover {
+  transform: scale(1.08);
+}
+
+.back-btn {
+  background: #0d6d05;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  margin-top: 10px;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  transform: scale(1.05);
+}
+
+.post-card input,
+.post-card select,
+.post-card textarea {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  box-sizing: border-box;
+}

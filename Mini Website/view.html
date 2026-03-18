@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Appointment</title>
+
+<link rel="stylesheet" href="style.css">
+<style>
+  .card {
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    color: white;
+  }
+
+  .actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .view-btn { background: #2196F3; color: white; }
+  .pdf-btn { background: #4CAF50; color: white; }
+  .cancel-btn { background: #f44336; color: white; }
+
+  .section input, .section button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+  }
+
+  .home-btn {
+    margin: 10px 0;
+    background: #555;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .mobile-frame {
+    max-width: 480px;
+    margin: auto;
+    padding: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="mobile-frame">
+  <header class="header">
+    <h2>View Appointment</h2>
+</header>
+
+  <div class="section">
+    <input type="text" id="phoneInput" placeholder="Enter Phone Number">
+    <button onclick="searchAppointments()">Search</button>
+    <button onclick="window.location.href='index.html'">Home</button>
+    <div id="results"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script type="module" src="view-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCA Forms</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+  .post-card {
+    margin: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    color: white;
+  }
+
+  input, textarea, button {
+    width: 100%;
+    margin: 6px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    box-sizing: border-box;
+  }
+
+  button {
+    background: #0d6d05;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .back-btn {
+    width: 100%;       /* match form width */
+    padding: 10px;
+    margin-top: 15px;
+    background: #555;  /* or keep green for uniformity: #0d6d05 */
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .back-btn i {
+    margin-right: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="mobile-frame">
+
+  <header class="header">
+    <h2>Forms & Letters</h2>
+  </header>
+
+  <div class="section" id="formsContainer">
+    <p>Loading forms...</p>
+  </div>
+  <button 
+  style="
+    width: 80%; 
+    padding: 10px; 
+    margin: 15px auto; 
+    display: block; 
+    text-align: center; 
+    border-radius: 10px; 
+    background-color: #0d6d05; 
+    color: white; 
+    cursor: pointer;
+    font-size: 14px;
+  " 
+  onclick="window.location.href='index.html'">
+  Home
+</button>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script src="forms-script.js"></script>
+</body>
+</html>

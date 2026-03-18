@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCA Mobile</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v25.0&appId=711944601983294">
+</script>
+
+<div class="mobile-frame">
+
+  <header class="header">
+    <div class="logo">
+      <a href="https://www.pca.gov.ph/" target="_blank">
+        <img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" alt="PCA Logo">
+      </a>
+    </div>
+    <h1>PCA Services</h1>
+  </header>
+
+  <section class="grid-menu">
+
+    <div class="grid-btn" onclick="navigate('schedule-home.html')">
+      <i class="fa-solid fa-calendar-days"></i>
+      <p>Schedule</p>
+    </div>
+
+    <div class="grid-btn" onclick="navigate('feedback.html')">
+      <i class="fa-solid fa-star"></i>
+      <p>Satisfaction</p>
+    </div>
+
+    <div class="grid-btn" onclick="navigate('forms.html')">
+      <i class="fa-solid fa-file-lines"></i>
+      <p>Forms</p>
+    </div>
+
+  </section>
+
+  <section class="section">
+    <h2>Latest Updates</h2>
+
+    <div class="post-card fb-card">
+
+      <div class="fb-page"
+        data-href="https://www.facebook.com/PhilippineCoconutAuthority"
+        data-tabs="timeline"
+        data-width="500"
+        data-height="700"
+        data-small-header="false"
+        data-adapt-container-width="true"
+        data-hide-cover="false"
+        data-show-facepile="true">
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+<div class="chat-icon" onclick="toggleChat()">
+  <img src="https://i.postimg.cc/LXcyfBpW/chat.png" alt="Chatbot">
+  <span class="chat-bubble" id="chatBubble">Ask a question!</span>
+</div>
+
+<div class="chat-box" id="chatBox">
+  <div class="chat-header">
+    PCA Chatbot
+    <span onclick="toggleChat()">—</span>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

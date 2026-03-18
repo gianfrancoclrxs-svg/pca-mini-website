@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCA Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; }
+  header { background: #0d6d05; color: white; padding: 15px; text-align: center; }
+  nav { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
+  nav button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; background: #4CAF50; color: white; }
+  nav button.active { background: #0d6d05; }
+  section { display: none; padding: 20px; }
+  section.active { display: block; }
+
+  input[type="text"] { width: 300px; padding: 8px; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+  th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+  th { background: #0d6d05; color: white; }
+  button.action-btn { padding: 5px 10px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
+  .edit-btn { background: #2196F3; color: white; }
+  .delete-btn { background: #f44336; color: white; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>PCA Admin Dashboard</h1>
+</header>
+
+<nav>
+  <button id="tabSchedules" class="active" onclick="showTab('schedules')">Schedules</button>
+  <button id="tabFeedbacks" onclick="showTab('feedbacks')">Feedbacks</button>
+  <button id="tabForms" onclick="showTab('forms')">Forms</button>
+</nav>
+
+<!-- Schedules Section -->
+<section id="schedules" class="active">
+  <h2>All Schedules</h2>
+  <input type="text" id="searchSchedules" placeholder="Search Schedules..." onkeyup="filterTable('schedulesTable', this.value)">
+  <table id="schedulesTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Region</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<!-- Feedbacks Section -->
+<section id="feedbacks">
+  <h2>Feedbacks</h2>
+  <input type="text" id="searchFeedbacks" placeholder="Search Feedbacks..." onkeyup="filterTable('feedbacksTable', this.value)">
+  <table id="feedbacksTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Message</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<!-- Forms Section -->
+<section id="forms">
+  <h2>Forms</h2>
+  <input type="text" id="searchForms" placeholder="Search Forms..." onkeyup="filterTable('formsTable', this.value)">
+  <table id="formsTable">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>File URL</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="admin-script.js"></script>
+</body>
+</html>

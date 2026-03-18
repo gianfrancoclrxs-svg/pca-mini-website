@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Appointment</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+  .card {
+    margin: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    color: white;
+  }
+
+  input, select, textarea, button {
+    width: 100%;
+    margin: 6px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+  }
+
+  button {
+    background: #0d6d05;
+    color: white;
+    cursor: pointer;
+  }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+
+  .calendar button {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .green { background: #4CAF50; }
+  .red { background: #f44336; }
+  .selected { border: 2px solid yellow; }
+
+  button {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .month-nav button {
+    width: auto;
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="mobile-frame">
+  <header class="header">
+    <h2>Book Appointment</h2>
+  </header>
+
+  <div class="card">
+
+    <!-- STEP 1 -->
+    <div id="step1">
+      <h3>Personal Information</h3>
+
+      <input id="lastName" placeholder="Last Name *">
+      <input id="firstName" placeholder="First Name *">
+      <input id="middleName" placeholder="Middle Name (Optional)">
+      <input id="suffix" placeholder="Suffix (Optional)">
+      <input id="address" placeholder="Address *">
+      <input id="email" placeholder="Email *">
+      <input id="phone" placeholder="Phone *">
+      <input id="age" type="number" placeholder="Age *">
+
+      <select id="civilStatus">
+        <option value="">Civil Status *</option>
+        <option>Single</option>
+        <option>Married</option>
+        <option>Widowed</option>
+        <option>Divorced</option>
+        <option>Separated</option>
+        <option>Annulled</option>
+        <option>Domestic Partnership / Cohabiting</option>
+    </select>
+
+      <input id="religion" placeholder="Religion *">
+
+      <button onclick="goToStep2()">Next</button>
+      <button onclick="window.location.href='index.html'">Home</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step2" style="display:none;">
+      <h3>Schedule Selection</h3>
+
+      <select id="region">
+        <option value="">Select Region *</option>
+        <option>NCR (National Capital Region)</option>
+        <option>Region I (Ilocos Region)</option>
+        <option>Region II (Cagayan Valley)</option>
+        <option>Region III (Central Luzon)</option>
+        <option>Region IV-A (CALABARZON)</option>
+        <option>Region IV-B (MIMAROPA)</option>
+        <option>Region V (Bicol Region)</option>
+        <option>Region VI (Western Visayas)</option>
+        <option>Region VII (Central Visayas)</option>
+        <option>Region VIII (Eastern Visayas)</option>
+        <option>Region IX (Zamboanga Peninsula)</option>
+        <option>Region X (Northern Mindanao)</option>
+        <option>Region XI (Davao Region)</option>
+        <option>Region XII (SOCCSKSARGEN)</option>
+        <option>Region XIII (Caraga)</option>
+        <option>BARMM (Bangsamoro Autonomous Region in Muslim Mindanao)</option>
+    </select>
+
+      <p>Select Date</p>
+      <div class="month-nav" style="display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="changeMonth(-1)">←</button>
+        <h4 id="monthLabel"></h4>
+        <button onclick="changeMonth(1)">→</button>
+      </div>
+      <div class="calendar" id="calendar"></div>
+      <select id="timeSlot">
+        <option value="">Select Time *</option>
+        <option>AM</option>
+        <option>PM</option>
+      </select>
+      <br>
+      <p>Note: <i>The Philippine government implemented a temporary four-day on-site workweek (with one day work-from-home) starting March 9, 2026, for executive branch agencies via Memorandum Circular No. 114, ordered by President Marcos to conserve energy.</i></p>
+
+
+      <button onclick="goToStep3()">Next</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" style="display:none;">
+      <h3>Review Your Appointment</h3>
+
+      <div id="reviewData"></div>
+
+      <button onclick="editInfo()">Edit</button>
+      <button onclick="finalSubmit()">Submit & Download PDF</button>
+      <button onclick="window.location.href='index.html'">Home</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="schedule-script.js"></script>
+
+</body>
+</html>
