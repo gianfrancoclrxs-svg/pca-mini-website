@@ -1,6 +1,5 @@
 // Make all functions global by attaching to window
 window.viewScript = (() => {
-  // ---------------- FIREBASE ----------------
   const firebaseConfig = {
     apiKey: "SECRET",
     authDomain: "pca-website-d2552.firebaseapp.com",
@@ -14,7 +13,6 @@ window.viewScript = (() => {
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // ---------------- SEARCH FUNCTION ----------------
   async function searchAppointments() {
     const phone = document.getElementById("phoneInput").value.trim();
     const resultsDiv = document.getElementById("results");
@@ -54,7 +52,6 @@ window.viewScript = (() => {
         const actions = document.createElement("div");
         actions.className = "actions";
 
-        // VIEW
         const viewBtn = document.createElement("button");
         viewBtn.textContent = "View";
         viewBtn.className = "view-btn";
@@ -73,7 +70,6 @@ window.viewScript = (() => {
         doc.text(`Status: COMPLETE PAYMENT`, 20, 90);
         doc.text(`You are scheduled. Proceed on your appointment date.`, 20, 100);
 
-        // PAGE 2 (Data Privacy)
         doc.addPage();
         doc.text("DATA PRIVACY NOTICE", 20, 20);
         doc.text(
@@ -119,16 +115,14 @@ window.viewScript = (() => {
             { maxWidth: 170 }
         );
 
-        // Open PDF in a new tab
         doc.output('dataurlnewwindow');
         };
 
-        // PDF
         const pdfBtn = document.createElement("button");
         pdfBtn.textContent = "PDF";
         pdfBtn.className = "pdf-btn";
-        pdfBtn.style.backgroundColor = "#00f83e"; // bright blue background
-        pdfBtn.style.color = "#fff"; // white text
+        pdfBtn.style.backgroundColor = "#00f83e"; 
+        pdfBtn.style.color = "#fff"; 
         pdfBtn.style.border = "none";
         pdfBtn.style.padding = "6px 12px";
         pdfBtn.style.borderRadius = "4px";
@@ -136,14 +130,13 @@ window.viewScript = (() => {
         pdfBtn.style.marginLeft = "5px";
         pdfBtn.onclick = () => generatePDF(data);
 
-        // CANCEL
         const cancelBtn = document.createElement("button");
         cancelBtn.textContent = "Cancel";
         cancelBtn.className = "cancel-btn";
         cancelBtn.onclick = async () => {
           await db.collection("schedules").doc(doc.id).update({ status: "cancelled" });
           alert("Appointment cancelled");
-          searchAppointments(); // refresh
+          searchAppointments(); 
         };
 
         actions.appendChild(viewBtn);
@@ -159,7 +152,6 @@ window.viewScript = (() => {
     }
   }
 
-  // ---------------- PDF FUNCTION ----------------
   function generatePDF(data) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -175,7 +167,6 @@ window.viewScript = (() => {
     doc.text(`Status: COMPLETE PAYMENT`, 20, 90);
     doc.text(`You are scheduled. Proceed on your appointment date.`, 20, 100);
 
-    // PAGE 2 (Data Privacy)
     doc.addPage();
     doc.text("DATA PRIVACY NOTICE", 20, 20);
     doc.text(
@@ -224,7 +215,6 @@ window.viewScript = (() => {
     doc.save("appointment.pdf");
   }
 
-  // Expose functions globally
   return { searchAppointments, generatePDF };
 })();
 window.searchAppointments = window.viewScript.searchAppointments;

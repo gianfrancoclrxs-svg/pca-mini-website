@@ -26,7 +26,6 @@ const faqs = [
 function loadFAQs() {
   const chatBody = document.getElementById('chatBody');
   
-  // Clear only buttons at bottom, keep previous messages
   const existingOptions = document.querySelector('.faq-btn-options');
   if (existingOptions) existingOptions.remove();
 
@@ -38,7 +37,6 @@ function loadFAQs() {
     chatBody.appendChild(btn);
   });
 
-  // None of these button (FB Live Chat)
   const noneBtn = document.createElement('div');
   noneBtn.className = 'faq-btn';
   noneBtn.innerText = "None of these? FB Live Chat";

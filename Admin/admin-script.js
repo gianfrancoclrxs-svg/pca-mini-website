@@ -1,4 +1,3 @@
-// FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
@@ -11,7 +10,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ---------- TABS ----------
 function showTab(tab) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -23,7 +21,6 @@ function showTab(tab) {
   if(tab === 'forms') loadForms();
 }
 
-// ---------- LOAD DATA ----------
 async function loadSchedules() {
   const tbody = document.querySelector('#schedulesTable tbody');
   tbody.innerHTML = '';
@@ -90,7 +87,6 @@ async function loadForms() {
   });
 }
 
-// ---------- DELETE DOCUMENT ----------
 async function deleteDoc(collection, id) {
   if(confirm("Are you sure you want to delete this record?")) {
     await db.collection(collection).doc(id).delete();
@@ -99,7 +95,6 @@ async function deleteDoc(collection, id) {
   }
 }
 
-// ---------- SEARCH TABLE ----------
 function filterTable(tableId, keyword) {
   keyword = keyword.toLowerCase();
   const table = document.getElementById(tableId);
@@ -110,11 +105,9 @@ function filterTable(tableId, keyword) {
     });
 }
 
-// ---------- EDIT FUNCTIONS ----------
 function editSchedule(id) { alert("Edit schedule feature to implement."); }
 function editForm(id) { alert("Edit form feature to implement."); }
 
-// ---------- FORM UPLOAD USING BASE64 ----------
 async function submitForm() {
   const fileInput = document.getElementById("formFile");
   const file = fileInput.files[0];
@@ -125,8 +118,8 @@ async function submitForm() {
 
   const reader = new FileReader();
   reader.onload = async () => {
-    const base64 = reader.result.split(",")[1]; // get the Base64 string
-
+    const base64 = reader.result.split(",")[1]; 
+    
     const data = {
       title: document.getElementById("formTitle").value.trim(),
       type: document.getElementById("formCategory").value.trim(),

@@ -1,4 +1,3 @@
-// FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
@@ -9,17 +8,14 @@ const firebaseConfig = {
   measurementId: "G-E97QRFDBVB"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// FETCH FORMS FROM DATABASE
 async function loadForms() {
   const container = document.getElementById("formsContainer");
   container.innerHTML = "Loading forms...";
 
   try {
-    // Order by 'type' to match your admin upload field
     const snapshot = await db.collection("forms").orderBy("type").get();
 
     if (snapshot.empty) {
@@ -27,8 +23,7 @@ async function loadForms() {
       return;
     }
 
-    container.innerHTML = ""; // clear loading
-
+    container.innerHTML = ""; 
     snapshot.forEach(doc => {
       const data = doc.data();
       const card = document.createElement("div");
@@ -40,7 +35,6 @@ async function loadForms() {
         <p>Description: ${data.description || "N/A"}</p>
       `;
 
-      // Add download button if Base64 file exists
       if (data.fileBase64 && data.fileName) {
         const downloadBtn = document.createElement("button");
         downloadBtn.textContent = "Download Form";
@@ -48,9 +42,9 @@ async function loadForms() {
             const link = document.createElement("a");
             link.href = `data:application/pdf;base64,${data.fileBase64}`;
             link.download = data.fileName;
-            document.body.appendChild(link); // append to DOM
-            link.click();                    // trigger download
-            document.body.removeChild(link); // clean up
+            document.body.appendChild(link); 
+            link.click();                   
+            document.body.removeChild(link); 
         };
         card.appendChild(downloadBtn);
     }
@@ -63,5 +57,4 @@ async function loadForms() {
   }
 }
 
-// LOAD FORMS ON PAGE LOAD
 window.addEventListener("load", loadForms);

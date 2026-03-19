@@ -1,4 +1,3 @@
-// FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
@@ -10,11 +9,9 @@ const firebaseConfig = {
 };
 
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ---------------- STEP NAVIGATION ----------------
 function goToStep2() {
   const required = ["lastName","firstName","address","email","phone","age","civilStatus","religion"];
   for (let id of required) {
@@ -32,7 +29,6 @@ function backToStep1() {
   document.getElementById("step2").style.display = "none";
 }
 
-// ---------------- CALENDAR ----------------
 let selectedDate = "";
 let currentDate = new Date();
 
@@ -49,7 +45,6 @@ function generateCalendar() {
   const firstDay = new Date(year, month, 1).getDay();
   const totalDays = new Date(year, month + 1, 0).getDate();
 
-  // Empty spots before first day
   for (let i=0;i<firstDay;i++) {
     const empty = document.createElement("div");
     calendar.appendChild(empty);
@@ -64,12 +59,11 @@ function generateCalendar() {
     const btn = document.createElement("button");
     btn.textContent = i;
 
-    // Disable past dates
     if(date < today) {
       btn.classList.add("red");
       btn.disabled = true;
     }
-    // Mon-Thu green
+    
     else if(day >= 1 && day <= 4) {
       btn.classList.add("green");
       btn.onclick = () => {
@@ -81,7 +75,7 @@ function generateCalendar() {
         document.getElementById("selectedDateText").innerText = "Selected Date: "+selectedDate;
       };
     }
-    else { // Fri-Sun red
+    else { 
       btn.classList.add("red");
       btn.disabled = true;
     }
@@ -97,7 +91,6 @@ function changeMonth(direction) {
 
 window.addEventListener("load", generateCalendar);
 
-// ---------------- STEP 3 REVIEW ----------------
 function getValue(id) {
   return document.getElementById(id).value || "N/A";
 }
@@ -134,7 +127,6 @@ function editInfo() {
   document.getElementById("step1").style.display = "block";
 }
 
-// ---------------- FINAL SUBMIT ----------------
 async function finalSubmit() {
   const data = {
     lastName: getValue("lastName"),
@@ -165,7 +157,6 @@ async function finalSubmit() {
   }
 }
 
-// ---------------- PDF ----------------
 function generatePDF(data) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
