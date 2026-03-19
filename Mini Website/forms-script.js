@@ -3,7 +3,7 @@ const firebaseConfig = {
   apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
   projectId: "pca-website-d2552",
-  storageBucket: "pca-website-d2552.firebasestorage.app",
+  storageBucket: "pca-website-d2552.appspot.com",
   messagingSenderId: "444810419373",
   appId: "1:444810419373:web:a5820613bd89fa7079fa24",
   measurementId: "G-E97QRFDBVB"
@@ -19,9 +19,10 @@ async function loadForms() {
   container.innerHTML = "Loading forms...";
 
   try {
+    // Order by 'type' to match your admin upload field
     const snapshot = await db.collection("forms").orderBy("type").get();
 
-    if(snapshot.empty) {
+    if (snapshot.empty) {
       container.innerHTML = "<p>No forms available.</p>";
       return;
     }
@@ -39,9 +40,9 @@ async function loadForms() {
         <p>Description: ${data.description || "N/A"}</p>
       `;
 
-      if(data.fileBase64 && data.fileName){
+      // Add download button if Base64 file exists
+      if (data.fileBase64 && data.fileName) {
         const downloadBtn = document.createElement("button");
-        downloadBtn.className = "download-btn";
         downloadBtn.textContent = "Download Form";
         downloadBtn.onclick = () => {
           const link = document.createElement("a");
