@@ -19,7 +19,7 @@ async function loadForms() {
   container.innerHTML = "Loading forms...";
 
   try {
-    const snapshot = await db.collection("forms").orderBy("category").get();
+    const snapshot = await db.collection("forms").orderBy("type").get();
 
     if(snapshot.empty) {
       container.innerHTML = "<p>No forms available.</p>";
@@ -35,15 +35,20 @@ async function loadForms() {
 
       card.innerHTML = `
         <p><strong>${data.title}</strong></p>
-        <p>Category: ${data.category}</p>
+        <p>Category: ${data.type}</p>
         <p>Description: ${data.description || "N/A"}</p>
       `;
 
-      if(data.fileUrl){
+      if(data.fileBase64 && data.fileName){
         const downloadBtn = document.createElement("button");
         downloadBtn.className = "download-btn";
         downloadBtn.textContent = "Download Form";
-        downloadBtn.onclick = () => window.open(data.fileUrl, "_blank");
+        downloadBtn.onclick = () => {
+          const link = document.createElement("a");
+          link.href = `data:application/pdf;base64,${data.fileBase64}`;
+          link.download = data.fileName;
+          link.click();
+        };
         card.appendChild(downloadBtn);
       }
 
