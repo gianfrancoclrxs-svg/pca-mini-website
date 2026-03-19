@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC12JnxSgSJPNxKO_XbmD28T78hSL1zq_c",
+  apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
   projectId: "pca-website-d2552",
   storageBucket: "pca-website-d2552.firebasestorage.app",

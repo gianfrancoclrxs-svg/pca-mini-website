@@ -1,6 +1,6 @@
 // FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyC12JnxSgSJPNxKO_XbmD28T78hSL1zq_c",
+  apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
   projectId: "pca-website-d2552",
   storageBucket: "pca-website-d2552.firebasestorage.app",
