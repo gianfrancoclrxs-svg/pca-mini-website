@@ -3,7 +3,7 @@ const firebaseConfig = {
   apiKey: "SECRET",
   authDomain: "pca-website-d2552.firebaseapp.com",
   projectId: "pca-website-d2552",
-  storageBucket: "pca-website-d2552.firebasestorage.app",
+  storageBucket: "pca-website-d2552.appspot.com",
   messagingSenderId: "444810419373",
   appId: "1:444810419373:web:a5820613bd89fa7079fa24",
   measurementId: "G-E97QRFDBVB"
@@ -78,7 +78,9 @@ async function loadForms() {
     tr.innerHTML = `
       <td>${d.title}</td>
       <td>${d.type}</td>
-      <td><a href="${d.fileURL}" target="_blank">Download</a></td>
+      <td>
+        <a href="data:application/pdf;base64,${d.fileBase64}" download="${d.fileName}">Download</a>
+      </td>
       <td>
         <button class="action-btn edit-btn" onclick="editForm('${doc.id}')">Edit</button>
         <button class="action-btn delete-btn" onclick="deleteDoc('forms','${doc.id}')">Delete</button>
@@ -108,6 +110,47 @@ function filterTable(tableId, keyword) {
     });
 }
 
-// ---------- EDIT FUNCTIONS (Optional for later) ----------
+// ---------- EDIT FUNCTIONS ----------
 function editSchedule(id) { alert("Edit schedule feature to implement."); }
 function editForm(id) { alert("Edit form feature to implement."); }
+
+// ---------- FORM UPLOAD USING BASE64 ----------
+async function submitForm() {
+  const fileInput = document.getElementById("formFile");
+  const file = fileInput.files[0];
+  if (!file || file.type !== "application/pdf") {
+    alert("Please select a PDF file!");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const base64 = reader.result.split(",")[1]; // get the Base64 string
+
+    const data = {
+      title: document.getElementById("formTitle").value.trim(),
+      type: document.getElementById("formCategory").value.trim(),
+      description: document.getElementById("formDescription").value.trim(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      fileBase64: base64,
+      fileName: file.name
+    };
+
+    try {
+      await db.collection("forms").add(data);
+      document.getElementById("uploadStatus").innerText = "Form uploaded successfully!";
+      document.getElementById("uploadForm").reset();
+      loadForms();
+    } catch (err) {
+      console.error(err);
+      document.getElementById("uploadStatus").innerText = "Upload failed. Check console.";
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("uploadForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  submitForm();
+});
