@@ -45,14 +45,15 @@ async function loadForms() {
         const downloadBtn = document.createElement("button");
         downloadBtn.textContent = "Download Form";
         downloadBtn.onclick = () => {
-          const link = document.createElement("a");
-          link.href = `data:application/pdf;base64,${data.fileBase64}`;
-          link.download = data.fileName;
-          link.click();
+            const link = document.createElement("a");
+            link.href = `data:application/pdf;base64,${data.fileBase64}`;
+            link.download = data.fileName;
+            document.body.appendChild(link); // append to DOM
+            link.click();                    // trigger download
+            document.body.removeChild(link); // clean up
         };
         card.appendChild(downloadBtn);
-      }
-
+    }
       container.appendChild(card);
     });
 
