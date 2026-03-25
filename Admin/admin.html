@@ -6,21 +6,75 @@
 <title>PCA Admin Dashboard</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  body { font-family: Arial, sans-serif; background: #f4f4f4; }
-  header { background: #0d6d05; color: white; padding: 15px; text-align: center; }
-  nav { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
-  nav button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; background: #4CAF50; color: white; }
-  nav button.active { background: #0d6d05; }
-  section { display: none; padding: 20px; }
-  section.active { display: block; }
+  body { 
+    font-family: Arial, sans-serif; 
+    background: #f4f4f4; 
+  }
+  header { 
+    background: #0d6d05; 
+    color: white; 
+    padding: 15px; 
+    text-align: center; 
+  }
+  nav { 
+    display: flex; 
+    justify-content: center; 
+    gap: 15px; margin: 15px 0; 
+  }
+  nav button { 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    background: #4CAF50; 
+    color: white; 
+  }
+  nav button.active { 
+    background: #0d6d05; 
+  }
+  section { 
+    display: none; 
+    padding: 20px; 
+  }
+  section.active { 
+    display: block; 
+  }
 
-  input[type="text"] { width: 300px; padding: 8px; margin-bottom: 10px; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
-  th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-  th { background: #0d6d05; color: white; }
-  button.action-btn { padding: 5px 10px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
-  .edit-btn { background: #2196F3; color: white; }
-  .delete-btn { background: #f44336; color: white; }
+  input[type="text"] { 
+    width: 300px; 
+    padding: 8px; 
+    margin-bottom: 10px; 
+  }
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px; 
+    background: white; 
+  }
+  th, td { 
+    padding: 10px; 
+    border: 1px solid #ddd; 
+    text-align: left; 
+  }
+  th { 
+    background: #0d6d05; 
+    color: white; 
+  }
+  button.action-btn { 
+    padding: 5px 10px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    margin-right: 5px; 
+  }
+  .edit-btn { 
+    background: #2196F3; 
+    color: white; 
+  }
+  .delete-btn { 
+    background: #f44336; 
+    color: white; 
+    }
 </style>
 </head>
 

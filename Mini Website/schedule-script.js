@@ -141,7 +141,7 @@ async function finalSubmit() {
     religion: getValue("religion"),
     region: document.getElementById("region").value,
     timeSlot: document.getElementById("timeSlot").value,
-    scheduledDate: selectedDate, // keep as string or convert to timestamp if you want
+    scheduledDate: selectedDate,
     submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
     status: "active"
   };
