@@ -140,3 +140,19 @@ window.addEventListener('DOMContentLoaded', () => {
   const bubble = document.getElementById('chatBubble');
   if (bubble) setTimeout(() => { bubble.style.opacity = '0'; }, 10000);
 });
+
+import { Analytics } from '@vercel/analytics/next';
+ 
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <head>
+        <title>Next.js</title>
+      </head>
+      <body>
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  );
+}
