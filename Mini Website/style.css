@@ -231,7 +231,7 @@ body::before {
   width: 100px;
   height: 100px;
   cursor: pointer;
-  z-index: 100;
+  z-index:1000;
   filter: drop-shadow(0 4px 14px rgba(0,0,0,0.3));
   transition: transform 0.2s;
 }
@@ -276,6 +276,7 @@ body::before {
   background: #fff;
   border-radius: 18px;
   display: none;
+  z-index: 1000;
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 16px 48px rgba(0,0,0,0.25);
