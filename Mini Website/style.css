@@ -7,22 +7,22 @@
 }
 
 :root {
-  --green-dark:  #0a5c03;
-  --green-mid:   #1aa108;
-  --green-light: #4cca2a;
-  --green-pale:  #d4f5cc;
+  --green-dark:  #1a7a10;
+  --green-mid:   #2db80f;
+  --green-light: #6de04a;
+  --green-pale:  #e8fce3;
   --white:       #ffffff;
-  --glass:       rgba(255,255,255,0.12);
-  --glass-border:rgba(255,255,255,0.25);
-  --shadow:      rgba(0,0,0,0.18);
+  --glass:       rgba(255,255,255,0.18);
+  --glass-border:rgba(255,255,255,0.35);
+  --shadow:      rgba(0,0,0,0.12);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   background:
-    radial-gradient(ellipse at 20% 0%, #3ecb1a 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 100%, #064a02 0%, transparent 55%),
-    linear-gradient(170deg, #2db80f 0%, #0d6d05 50%, #063d02 100%);
+    radial-gradient(ellipse at 20% 0%, #7de85a 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 100%, #1aa108 0%, transparent 55%),
+    linear-gradient(170deg, #4cca2a 0%, #2db80f 50%, #1a7a10 100%);
   background-attachment: fixed;
   display: flex;
   justify-content: center;
@@ -176,7 +176,7 @@ body::before {
   align-items: center;
   gap: 10px;
   padding: 14px 14px 10px;
-  background: #0d6d05;
+  background: #2db80f;
 }
 
 .updates-header h2 {
