@@ -14,7 +14,7 @@
 
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous"
-src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v25.0&appId=711944601983294">
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v25.0&appId=711944601983294">
 </script>
 
 <div class="mobile-frame">
@@ -29,43 +29,318 @@ src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v25.0&appId=71194
   </header>
 
   <section class="grid-menu">
-
     <div class="grid-btn" onclick="navigate('schedule-home.html')">
       <i class="fa-solid fa-calendar-days"></i>
       <p>Schedule</p>
     </div>
-
     <div class="grid-btn" onclick="navigate('feedback.html')">
       <i class="fa-solid fa-star"></i>
       <p>Satisfaction</p>
     </div>
-
     <div class="grid-btn" onclick="navigate('forms.html')">
       <i class="fa-solid fa-file-lines"></i>
       <p>Forms</p>
     </div>
+</section> <!-- end grid-menu -->
 
-  </section>
+  <!-- Sticky building that overlaps when scrolling -->
+  <div style="
+    z-index: 20;
+    overflow: hidden;
+    transform: translateZ(0);
+    will-change: transform;
+    isolation: isolate;
+  ">
+    <img src="assets/BLDG.png" alt="PCA Building" style="
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    ">
+    <div style="
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(13,109,5,0.5) 50%, #0d6d05 100%);
+      pointer-events: none;
+    "></div>
+  </div>
 
-  <section class="section">
+  <!-- Latest Updates label -->
+  <div class="updates-header">
+    <span class="dot"></span>
     <h2>Latest Updates</h2>
+  </div>
 
-    <div class="post-card fb-card">
-
-      <div class="fb-page"
-        data-href="https://www.facebook.com/PhilippineCoconutAuthority"
-        data-tabs="timeline"
-        data-width="500"
-        data-height="700"
-        data-small-header="false"
-        data-adapt-container-width="true"
-        data-hide-cover="false"
-        data-show-facepile="true">
-      </div>
-
+  <!-- Facebook feed -->
+  <div class="fb-card">
+    <div class="fb-page"
+      data-href="https://www.facebook.com/PhilippineCoconutAuthority"
+      data-tabs="timeline"
+      data-width="500"
+      data-height="700"
+      data-small-header="false"
+      data-adapt-container-width="true"
+      data-hide-cover="false"
+      data-show-facepile="true">
     </div>
+  </div>
 
-  </section>
+  <!-- Resources & Downloads -->
+<div style="
+  margin: 0 14px 14px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.13);
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+">
+
+  <!-- Resources Header -->
+  <div style="
+    background: rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  ">
+    <i class="fa-solid fa-folder-open" style="color: white; font-size: 16px;"></i>
+    <span style="color: white; font-size: 16px; font-weight: 700; letter-spacing: 0.3px;">Resources</span>
+  </div>
+
+  <div style="padding: 8px 12px;">
+
+    <a href="https://pca.gov.ph/ncfrs-checker" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">NCFRS Registry Checker</span>
+    </a>
+
+    <a href="https://pca.gov.ph/index.php/2-uncategorised/189-coconut-gallery-2" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">Coconut Product Information</span>
+    </a>
+
+    <a href="https://pca.gov.ph/index.php/2-uncategorised/196-cocotech" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">CocoTech</span>
+    </a>
+
+    <a href="https://pca.gov.ph/index.php/trade-market/price-watch-trends" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">Price Watch & Trends</span>
+    </a>
+
+    <a href="https://pca.gov.ph/index.php/resources/coconut-statistics" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">Coconut Statistics</span>
+    </a>
+
+  </div>
+
+  <!-- Partner Links Header -->
+  <div style="
+    background: rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  ">
+    <i class="fa-solid fa-link" style="color: white; font-size: 16px;"></i>
+    <span style="color: white; font-size: 16px; font-weight: 700; letter-spacing: 0.3px;">Partner Links</span>
+  </div>
+
+  <div style="padding: 8px 12px;">
+
+    <a href="http://www.da.gov.ph" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px;">Department of Agriculture</span>
+    </a>
+
+    <a href="https://whistleblowing.gcg.gov.ph" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px;">GCG Whistleblowing</span>
+    </a>
+
+    <a href="http://spsissuances.da.gov.ph" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px;">SPS Legal Issuances</span>
+    </a>
+
+    <a href="https://sites.google.com/view/coconutr4d" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px;">Coconut R&D</span>
+    </a>
+
+    <a href="https://pca.gov.ph/index.php?option=com_content&view=article&id=604" target="_blank" style="
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 4px;
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px;">GAD</span>
+    </a>
+
+  </div>
+</div>
+
+  <!-- Related Articles -->
+<div style="
+  margin: 0 14px 20px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.13);
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+">
+
+  <!-- Header -->
+  <div style="
+    background: rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  ">
+    <i class="fa-solid fa-newspaper" style="color: white; font-size: 16px;"></i>
+    <span style="
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    ">Related Articles</span>
+  </div>
+
+  <!-- Articles list -->
+  <div style="padding: 8px 12px;">
+
+    <a href="https://opinion.inquirer.net/167184/new-hope-for-coconut-farmers" target="_blank" style="
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); margin-top: 2px; flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">New hope for coconut farmers</span>
+    </a>
+
+    <a href="https://palawan-news.com/coconut-seedlings-planted-in-kalayaan-shores-as-assertion-of-sovereignty/" target="_blank" style="
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); margin-top: 2px; flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">Coconut seedlings planted in Kalayaan shores as assertion of sovereignty</span>
+    </a>
+
+    <a href="https://newsinfo.inquirer.net/1836902/fwd-10345-beneficiaries-served-in-bpsf-launch-da" target="_blank" style="
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); margin-top: 2px; flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">Bagong Pilipinas Serbisyo Fair extends agri aid to 10,345 Bicolanos</span>
+    </a>
+
+    <a href="https://www.pna.gov.ph/articles/1210792" target="_blank" style="
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); margin-top: 2px; flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">5K Dinagat coconut farmers get PCA assistance</span>
+    </a>
+
+    <a href="https://manilastandard.net/business/314371469/doe-promotes-use-of-coconut-oil-as-aviation-fuel.html" target="_blank" style="
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+    ">
+      <i class="fa-solid fa-circle-arrow-right" style="color: rgba(255,255,255,0.6); margin-top: 2px; flex-shrink: 0;"></i>
+      <span style="color: white; font-size: 13px; line-height: 1.4;">DOE promotes use of coconut oil as aviation fuel</span>
+    </a>
+
+    <!-- Read more -->
+    <a href="https://www.pca.gov.ph/index.php/18-related-articles/266-media-clips" target="_blank" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-decoration: none;
+      transition: background 0.2s;
+    ">
+      <span style="color: white; font-size: 13px; font-weight: 600;">Read more articles</span>
+      <i class="fa-solid fa-arrow-right" style="color: white; font-size: 12px;"></i>
+    </a>
+
+  </div>
+</div>
 
 </div>
 

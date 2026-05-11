@@ -36,18 +36,33 @@ async function loadForms() {
       `;
 
       if (data.fileBase64 && data.fileName) {
-        const downloadBtn = document.createElement("button");
-        downloadBtn.textContent = "Download Form";
-        downloadBtn.onclick = () => {
-            const link = document.createElement("a");
-            link.href = `data:application/pdf;base64,${data.fileBase64}`;
-            link.download = data.fileName;
-            document.body.appendChild(link); 
-            link.click();                   
-            document.body.removeChild(link); 
-        };
-        card.appendChild(downloadBtn);
+  const downloadBtn = document.createElement("button");
+  downloadBtn.textContent = "Download Form";
+  downloadBtn.onclick = () => {
+    // Convert base64 to blob
+    const byteChars = atob(data.fileBase64);
+    const byteArr = new Uint8Array(byteChars.length);
+    for (let i = 0; i < byteChars.length; i++) {
+      byteArr[i] = byteChars.charCodeAt(i);
     }
+    const blob = new Blob([byteArr], { type: "application/pdf" });
+    const blobUrl = URL.createObjectURL(blob);
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      window.open(blobUrl, "_blank");
+    } else {
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = data.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    }
+  };
+  card.appendChild(downloadBtn);
+}
       container.appendChild(card);
     });
 
