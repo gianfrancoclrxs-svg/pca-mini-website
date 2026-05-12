@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Submitted — PCA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #1a5c2e;
+      --green-mid:   #2d7a44;
+      --green-light: #e8f3ec;
+      --gold:        #c5920a;
+      --gold-pale:   #fdf6e3;
+      --ink:         #1a1a18;
+      --muted:       #5a6b60;
+      --border:      #d0d8d2;
+      --surface:     #f5f7f5;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse at 20% 0%, #7de85a 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%, #1aa108 0%, transparent 55%),
+        linear-gradient(170deg, #4cca2a 0%, #2db80f 50%, #1a7a10 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .frame {
+      width: 100%;
+      max-width: 420px;
+      padding-bottom: 40px;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: rgba(0,0,0,0.2);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .site-header img { width: 40px; height: 40px; object-fit: contain; }
+    .site-header h1 {
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    /* ── SUCCESS HERO ── */
+    .success-hero {
+      margin: 20px 16px 0;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 28px 20px 24px;
+      text-align: center;
+    }
+
+    .check-circle {
+      width: 72px;
+      height: 72px;
+      background: rgba(255,255,255,0.2);
+      border: 3px solid rgba(255,255,255,0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    .check-circle i { color: white; font-size: 30px; }
+
+    @keyframes popIn {
+      0%   { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-hero h2 {
+      color: white;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .success-hero p {
+      color: rgba(255,255,255,0.82);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── ID CARD ── */
+    .id-card {
+      margin: 14px 16px 0;
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .id-card-header {
+      background: var(--green);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .id-card-header i { color: rgba(255,255,255,0.8); font-size: 14px; }
+    .id-card-header span {
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .id-card-body { padding: 16px; }
+
+    .id-number {
+      font-family: 'Courier New', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+
+    .id-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .id-row:last-child { border-bottom: none; }
+    .id-row .label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+    .id-row .value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .copy-btn {
+      margin-top: 14px;
+      width: 100%;
+      background: var(--green-light);
+      color: var(--green);
+      border: 1.5px solid #b8d9c2;
+      border-radius: 10px;
+      padding: 11px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 0.15s;
+    }
+    .copy-btn:active { background: #d0ecda; }
+
+    /* ── DOWNLOAD NOTICE ── */
+    .download-notice {
+      margin: 14px 16px 0;
+      background: var(--gold-pale);
+      border: 1px solid #e8d5a0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .download-notice i { color: var(--gold); font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+    .download-notice p { font-size: 13px; color: #7a5800; line-height: 1.55; }
+    .download-notice strong { color: #5a3d00; }
+
+    /* ── SECTION CARD (Directory) ── */
+    .section-card {
+      margin: 14px 16px 0;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .section-card-header {
+      background: rgba(0,0,0,0.2);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .section-card-header i { color: white; font-size: 15px; }
+    .section-card-header span {
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    /* ── DIRECTORY REGION ── */
+    .dir-region {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .dir-region:last-child { border-bottom: none; }
+    .dir-region-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 7px;
+    }
+    .dir-office { font-size: 14px; font-weight: 700; color: white; margin-bottom: 2px; }
+    .dir-dept   { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+    .dir-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 5px;
+    }
+    .dir-row:last-child { margin-bottom: 0; }
+    .dir-row i { color: rgba(255,255,255,0.6); font-size: 13px; width: 14px; text-align: center; flex-shrink: 0; }
+
+    /* ── HOME BUTTON ── */
+    .home-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 16px 0;
+      background: white;
+      color: var(--green);
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .home-btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+    .home-btn i { font-size: 16px; }
+  </style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- Header -->
+  <div class="site-header">
+    <a href="index.html">
+      <img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" alt="PCA Logo">
+    </a>
+    <h1>PCA Services</h1>
+  </div>
+
+  <!-- Success Hero -->
+  <div class="success-hero">
+    <div class="check-circle">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <h2>Form Submitted!</h2>
+    <p>Your NCFRS Enrollment Form has been received. Keep your Applicant ID — you'll need it when you visit the office.</p>
+  </div>
+
+  <!-- ID Card -->
+  <div class="id-card">
+    <div class="id-card-header">
+      <i class="fa-solid fa-id-badge"></i>
+      <span>Your Applicant ID</span>
+    </div>
+    <div class="id-card-body">
+      <div class="id-number" id="applicantIdDisplay">—</div>
+
+      <div class="id-row">
+        <span class="label">Full Name</span>
+        <span class="value" id="displayName">—</span>
+      </div>
+      <div class="id-row">
+        <span class="label">Contact</span>
+        <span class="value" id="displayContact">—</span>
+      </div>
+      <div class="id-row">
+        <span class="label">Form</span>
+        <span class="value" id="displayForm">—</span>
+      </div>
+      <div class="id-row">
+        <span class="label">Submitted</span>
+        <span class="value" id="displayDate">—</span>
+      </div>
+      <div class="id-row">
+        <span class="label">File</span>
+        <span class="value" id="displayFile" style="font-size:11px;">—</span>
+      </div>
+
+      <button class="copy-btn" onclick="copyId()">
+        <i class="fa-solid fa-copy"></i>
+        <span id="copyLabel">Copy Applicant ID</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Download Notice (content set by JS) -->
+  <div class="download-notice" id="downloadNotice">
+    <i class="fa-solid fa-circle-down"></i>
+    <p id="downloadMsg"></p>
+  </div>
+
+  <!-- iOS only: tap to re-open the form -->
+  <a id="iosOpenBtn" href="#" class="home-btn" style="display:none; background:#1a5c2e; color:white; margin-top:10px;">
+    <i class="fa-solid fa-file-arrow-down"></i>
+    Open My Form
+  </a>
+
+  <!-- NCFRS Directory -->
+  <div class="section-card">
+    <div class="section-card-header">
+      <i class="fa-solid fa-building"></i>
+      <span>Where to Submit</span>
+    </div>
+
+    <div class="dir-region">
+      <span class="dir-region-label">NCR</span>
+      <div class="dir-office">Philippine Coconut Authority</div>
+      <div class="dir-dept">Office of the Administrator — 7th Floor</div>
+      <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Elliptical Road, Diliman, Quezon City</div>
+      <div class="dir-row"><i class="fa-solid fa-phone"></i> (02) 8920-4062</div>
+      <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+    </div>
+
+    <div class="dir-region">
+      <span class="dir-region-label">Region III — Central Luzon</span>
+      <div class="dir-office">PCA Regional Office No. III</div>
+      <div class="dir-dept">Farmer Services Division</div>
+      <div class="dir-row"><i class="fa-solid fa-location-dot"></i> San Fernando, Pampanga</div>
+      <div class="dir-row"><i class="fa-solid fa-phone"></i> (045) 961-2345</div>
+      <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+    </div>
+
+    <div class="dir-region">
+      <span class="dir-region-label">Region IV-A — CALABARZON</span>
+      <div class="dir-office">PCA Regional Office No. IV-A</div>
+      <div class="dir-dept">Farmer Services Division</div>
+      <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Calamba, Laguna</div>
+      <div class="dir-row"><i class="fa-solid fa-phone"></i> (049) 545-6789</div>
+      <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+    </div>
+
+    <div class="dir-region">
+      <span class="dir-region-label">Region VI — Western Visayas</span>
+      <div class="dir-office">PCA Regional Office No. VI</div>
+      <div class="dir-dept">Farmer Services Division</div>
+      <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Iloilo City</div>
+      <div class="dir-row"><i class="fa-solid fa-phone"></i> (033) 321-1234</div>
+      <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+    </div>
+
+    <div class="dir-region">
+      <span class="dir-region-label">Region XI — Davao</span>
+      <div class="dir-office">PCA Regional Office No. XI</div>
+      <div class="dir-dept">Farmer Services Division</div>
+      <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Davao City</div>
+      <div class="dir-row"><i class="fa-solid fa-phone"></i> (082) 221-5678</div>
+      <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+    </div>
+  </div>
+
+  <!-- Home Button -->
+  <a href="index.html" class="home-btn">
+    <i class="fa-solid fa-house"></i>
+    Back to Home
+  </a>
+
+</div>
+
+<script>
+  (function () {
+    // ── Load submission record ──
+    let record = {};
+    try { record = JSON.parse(sessionStorage.getItem('pca_submission') || '{}'); } catch(e) {}
+
+    document.getElementById('applicantIdDisplay').textContent = record.applicant_id || '—';
+    document.getElementById('displayName').textContent        = record.fullname      || '—';
+    document.getElementById('displayContact').textContent     = record.contact       || '—';
+    document.getElementById('displayForm').textContent        = record.form          || '—';
+    document.getElementById('displayFile').textContent        = record.pdf           || '—';
+
+    if (record.createdAt) {
+      const dt   = new Date(record.createdAt);
+      const opts = { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' };
+      document.getElementById('displayDate').textContent = dt.toLocaleDateString('en-PH', opts);
+    }
+
+    // ── iOS vs non-iOS download notice ──
+    const isIOS   = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const msg     = document.getElementById('downloadMsg');
+    const iosBtn  = document.getElementById('iosOpenBtn');
+    const blobUrl = sessionStorage.getItem('pca_blob_url');
+    const fname   = sessionStorage.getItem('pca_file_name');
+
+    if (isIOS) {
+      msg.innerHTML = 'Your form opened in a new tab. Tap <strong>Open My Form</strong> below if it didn\'t open, then use <strong>Share → Print</strong> to save as PDF.';
+      if (blobUrl) {
+        iosBtn.href = blobUrl;
+        iosBtn.setAttribute('target', '_blank');
+        iosBtn.style.display = 'flex';
+      }
+    } else {
+      msg.innerHTML = 'Your form has been <strong>downloaded automatically</strong>. Open it in your browser and use <strong>Print → Save as PDF</strong> to get the official copy to bring to the office.';
+    }
+  })();
+
+  function copyId() {
+    const id = document.getElementById('applicantIdDisplay').textContent;
+    if (!id || id === '—') return;
+    navigator.clipboard.writeText(id).then(() => {
+      const lbl = document.getElementById('copyLabel');
+      lbl.textContent = 'Copied!';
+      setTimeout(() => { lbl.textContent = 'Copy Applicant ID'; }, 2000);
+    }).catch(() => {
+      // fallback
+      const el = document.getElementById('applicantIdDisplay');
+      const range = document.createRange();
+      range.selectNode(el);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+    });
+  }
+</script>
+</body>
+</html>

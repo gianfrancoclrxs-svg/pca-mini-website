@@ -25,38 +25,45 @@
         <img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" alt="PCA Logo">
       </a>
     </div>
-    <h1 style="cursor: default;"><a href="/Admin/admin.html" style="color: inherit; text-decoration: none; pointer-events: auto;">PCA Services</a></h1>
+    <h1 style="cursor: default;"><a href="admin.html" style="color: inherit; text-decoration: none; pointer-events: auto;">PCA Services</a></h1>
   </header>
 
-  <section class="grid-menu">
-    <div class="grid-btn" onclick="navigate('feedback.html')">
-      <i class="fa-solid fa-star"></i>
-      <p>Satisfaction</p>
-    </div>
-    <div class="grid-btn" onclick="navigate('forms.html')">
-      <i class="fa-solid fa-file-lines"></i>
-      <p>Forms</p>
-    </div>
-  </section> <!-- end grid-menu -->
-
-  <div style="
-    z-index: 20;
-    overflow: hidden;
-    transform: translateZ(0);
-    will-change: transform;
-    isolation: isolate;
-  ">
+  <!-- Hero block: buttons sit on top of the building image -->
+  <div style="position: relative; overflow: hidden;">
     <img src="assets/BLDG.png" alt="PCA Building" style="
       width: 100%;
       display: block;
       object-fit: cover;
+      max-height: 260px;
     ">
+    <!-- gradient overlay so buttons are readable -->
     <div style="
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(45,184,15,0.4) 50%, #2db80f 100%);
+      background: linear-gradient(to bottom,
+        rgba(26,122,16,0.72) 0%,
+        rgba(45,184,15,0.45) 55%,
+        #2db80f 100%);
       pointer-events: none;
     "></div>
+
+    <!-- Buttons layered on top of the image -->
+    <section class="grid-menu" style="
+      position: absolute;
+      top: 50%;
+      left: 0; right: 0;
+      transform: translateY(-50%);
+      z-index: 5;
+    ">
+      <div class="grid-btn" onclick="navigate('feedback.html')">
+        <i class="fa-solid fa-star"></i>
+        <p>Satisfaction</p>
+      </div>
+      <div class="grid-btn" onclick="navigate('forms.html')">
+        <i class="fa-solid fa-file-lines"></i>
+        <p>Forms</p>
+      </div>
+    </section>
   </div>
 
   <!-- Latest Updates label -->

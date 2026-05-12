@@ -694,12 +694,67 @@ function printForm() {
   </div>
 
 </div>
-<script>window.onload = function(){ window.print(); }<\/script>
+<\/script>
 </body></html>`;
 
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
+  // ── Generate unique applicant ID ──────────────────────────
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const datePart = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  const randPart = Math.random().toString(36).substring(2,7).toUpperCase();
+  const applicantId = `NCFRS-${datePart}-${randPart}`;
+
+  // ── Trigger download — iOS gets new tab, others auto-download ──
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const blob    = new Blob([html], { type: 'text/html' });
+  const blobUrl = URL.createObjectURL(blob);
+  const fileName = `NCFRS_${d.ln}_${d.fn}_${datePart}.html`;
+
+  if (isIOS) {
+    // iOS Safari: open in new tab (user can then share/save from there)
+    window.open(blobUrl, '_blank');
+    // Store the blobUrl so confirmation.html can show a tap-to-open button as fallback
+    sessionStorage.setItem('pca_blob_url', blobUrl);
+    sessionStorage.setItem('pca_file_name', fileName);
+  } else {
+    // All other browsers: trigger automatic download
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+  }
+
+  // ── Save to Firestore ──────────────────────────────────────
+  const fullName = [d.fn, d.mn, d.ln, d.en].filter(Boolean).join(' ');
+  const contact  = d.contact1 || d.contact2 || '';
+  const record   = {
+    applicant_id: applicantId,
+    fullname:     fullName,
+    contact:      contact,
+    createdAt:    now.toISOString(),
+    form:         'NCFRS Form',
+    pdf:          `NCFRS_${d.ln}_${d.fn}_${datePart}.html`
+  };
+
+  // Store record in sessionStorage so confirmation.html can read it
+  sessionStorage.setItem('pca_submission', JSON.stringify(record));
+
+  // Save to Firestore via Firebase SDK (fire-and-forget — redirect happens regardless)
+  (async function saveToFirestore() {
+    try {
+      await firebase.firestore().collection('submissions').add(record);
+    } catch(e) {
+      console.error('Firestore save failed:', e);
+    }
+  })();
+
+  // ── Redirect to confirmation page ─────────────────────────
+  setTimeout(() => {
+    window.location.href = 'confirmation.html';
+  }, 800);
 }
 
 // ── Wire up buttons after DOM is ready ────────────────────

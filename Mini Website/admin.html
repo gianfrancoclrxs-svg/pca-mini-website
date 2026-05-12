@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCA Admin Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: #0d6d05;
+    color: white;
+    padding: 14px 16px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  header h1 { font-size: clamp(15px, 3.5vw, 22px); }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 49px;
+    z-index: 100;
+  }
+  nav button {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+    font-size: 14px;
+    flex: 1 1 auto;
+    max-width: 180px;
+    min-width: 90px;
+    transition: background 0.2s;
+  }
+  nav button.active { background: #0d6d05; }
+  nav button:hover:not(.active) { background: #3d9140; }
+
+  /* ── SECTIONS ── */
+  section {
+    display: none;
+    padding: 16px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  section.active { display: block; }
+  section h2 {
+    color: #0d6d05;
+    font-size: clamp(16px, 3vw, 20px);
+    margin-bottom: 12px;
+  }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    width: 100%;
+    max-width: 380px;
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    display: block;
+  }
+
+  /* ── DESKTOP TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+  }
+  th, td {
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+    vertical-align: top;
+    font-size: 14px;
+  }
+  th {
+    background: #0d6d05;
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  tr:nth-child(even) { background: #f9f9f9; }
+  tr:hover { background: #f0faf0; }
+
+  /* ── MOBILE CARDS ── */
+  .card-list { display: none; }
+  .card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .card-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .card-label {
+    font-weight: 700;
+    color: #0d6d05;
+    min-width: 95px;
+    flex-shrink: 0;
+  }
+  .card-value { color: #333; flex: 1; word-break: break-word; }
+  .card-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ── BUTTONS ── */
+  button.action-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity 0.15s;
+  }
+  button.action-btn:hover { opacity: 0.82; }
+  .delete-btn { background: #f44336; color: white; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    nav { top: 44px; }
+    .table-wrap { display: none; }
+    .card-list { display: block; }
+    section { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PCA Admin Dashboard</h1>
+</header>
+
+<nav>
+  <button id="tabSubmissions" class="active" onclick="showTab('submissions')">Submissions</button>
+  <button id="tabFeedbacks" onclick="showTab('feedbacks')">Feedbacks</button>
+</nav>
+
+<!-- ══ SUBMISSIONS ══ -->
+<section id="submissions" class="active">
+  <h2>Submissions</h2>
+  <input class="search-bar" type="text" placeholder="Search Submissions..." oninput="filterCards('submissionsCards', this.value); filterTableRows('submissionsTable', this.value)">
+  <div class="table-wrap">
+    <table id="submissionsTable">
+      <thead>
+        <tr>
+          <th>Applicant ID</th><th>Full Name</th><th>Form</th>
+          <th>Contact</th><th>PDF</th><th>Date</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="card-list" id="submissionsCards"></div>
+</section>
+
+<!-- ══ FEEDBACKS ══ -->
+<section id="feedbacks">
+  <h2>Feedbacks</h2>
+  <input class="search-bar" type="text" placeholder="Search Feedbacks..." oninput="filterCards('feedbacksCards', this.value); filterTableRows('feedbacksTable', this.value)">
+  <div class="table-wrap">
+    <table id="feedbacksTable">
+      <thead>
+        <tr>
+          <th>Office</th><th>Region</th><th>Rating</th>
+          <th>Comment</th><th>Date</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="card-list" id="feedbacksCards"></div>
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="admin-script.js"></script>
+</body>
+</html>
