@@ -7,37 +7,247 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    .stars {
+    .feedback-card {
+      margin-bottom: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      color: white;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .feedback-card-header {
       display: flex;
-      gap: 8px;
-      font-size: 30px;
-      cursor: pointer;
-      margin: 10px 0;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
-    .stars i {
-      color: #ccc; 
-      transition: color 0.2s;
-    }
-
-    .stars i.hover,
-    .stars i.selected {
-      color: gold;
-    }
-
-    textarea {
-      min-height: 80px;
-    }
-
-    button.back-btn {
-      margin-top: 10px;
-      padding: 8px 12px;
-      font-size: 14px;
+    .feedback-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
       display: flex;
       align-items: center;
-      gap: 5px;
-      cursor: pointer;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.85);
     }
+
+    .feedback-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 4px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .feedback-badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      background: rgba(109,224,74,0.22);
+      border: 1px solid rgba(109,224,74,0.45);
+      color: #c8f5b8;
+    }
+
+    .feedback-card select {
+      width: 100%;
+      margin: 0 0 14px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      box-sizing: border-box;
+      transition: opacity 0.2s;
+    }
+
+    .feedback-card select option {
+      color: #1a7a10;
+      background: #fff;
+    }
+
+    .feedback-card select:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 8px;
+    }
+
+    .radio {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-direction: row-reverse;
+      margin: 4px 0 6px;
+    }
+
+    .radio > input { display: none; }
+
+    .radio > label {
+      cursor: pointer;
+      position: relative;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .radio > label > svg {
+      fill: rgba(255,255,255,0.3);
+      transition: fill 0.3s ease;
+      width: 2em;
+      height: 2em;
+      display: block;
+    }
+
+    .radio > label::before,
+    .radio > label::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: #ff9e0b;
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(0);
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+
+    .radio > label::before { top: -14px; left: 50%; transform: translateX(-50%) scale(0); }
+    .radio > label::after  { bottom: -14px; left: 50%; transform: translateX(-50%) scale(0); }
+
+    .radio > label:hover::before,
+    .radio > label:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) scale(1.5);
+    }
+
+    .radio > label:hover { transform: scale(1.2); animation: star-pulse 0.6s infinite alternate; }
+
+    .radio > label:hover > svg,
+    .radio > label:hover ~ label > svg {
+      fill: #ff9e0b;
+      filter: drop-shadow(0 0 15px rgba(255,158,11,0.9));
+      animation: star-shimmer 1s ease infinite alternate;
+    }
+
+    .radio > input:checked + label > svg,
+    .radio > input:checked + label ~ label > svg {
+      fill: #ff9e0b;
+      filter: drop-shadow(0 0 15px rgba(255,158,11,0.9));
+      animation: star-pulse 0.8s infinite alternate;
+    }
+
+    .radio > input:checked + label:hover > svg,
+    .radio > input:checked + label:hover ~ label > svg { fill: #e58e09; }
+
+    .radio input:checked ~ label svg { fill: #ffa723; }
+
+    @keyframes star-pulse {
+      0%  { transform: scale(1); }
+      100%{ transform: scale(1.1); }
+    }
+
+    @keyframes star-shimmer {
+      0%  { filter: drop-shadow(0 0 10px rgba(255,158,11,0.5)); }
+      100%{ filter: drop-shadow(0 0 20px rgba(255,158,11,1)); }
+    }
+
+    .rating-hint {
+      text-align: center;
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin: 4px 0 14px;
+    }
+
+    .feedback-card textarea {
+      width: 100%;
+      min-height: 90px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      box-sizing: border-box;
+      margin: 0 0 14px;
+    }
+
+    .feedback-card textarea::placeholder { color: rgba(255,255,255,0.5); }
+
+    .btn-row { display: flex; gap: 8px; }
+
+    #submitFeedback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+      padding: 11px;
+      border-radius: 10px;
+      border: none;
+      background: var(--green-dark);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(26,122,16,0.45);
+      transition: filter 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #submitFeedback:hover  { filter: brightness(1.12); }
+    #submitFeedback:active { transform: scale(0.97); }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+      padding: 11px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 0;
+      width: auto;
+    }
+
+    .back-btn:hover  { background: rgba(255,255,255,0.26); }
+    .back-btn:active { transform: scale(0.97); }
   </style>
 </head>
 <body>
@@ -47,55 +257,146 @@
     <h2>Satisfaction</h2>
   </header>
 
-  <div class="section post-card">
-    <p><strong>Rate PCA Services</strong></p>
-    <select id="officeSelect">
-      <option>Office of the Administration</option>
-      <option>Human Resource Division</option>
-      <option>Legal Affairs Service</option>
-    </select>
+  <div class="section" style="padding: 14px;">
+    <div class="feedback-card">
 
-    <div class="stars" id="starRating">
-      <i class="fa-regular fa-star" data-value="1"></i>
-      <i class="fa-regular fa-star" data-value="2"></i>
-      <i class="fa-regular fa-star" data-value="3"></i>
-      <i class="fa-regular fa-star" data-value="4"></i>
-      <i class="fa-regular fa-star" data-value="5"></i>
+      <!-- Header -->
+      <div class="feedback-card-header">
+        <div class="feedback-icon">
+          <i class="fa fa-star"></i>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <div class="feedback-title">Rate PCA Services</div>
+          <span class="feedback-badge">Feedback</span>
+        </div>
+      </div>
+
+      <!-- Region -->
+      <div class="field-label">Select Region</div>
+      <select id="regionSelect">
+        <option value="">-- Select Region --</option>
+        <option value="ncr">NCR / Central Office</option>
+        <option value="car">CAR</option>
+        <option value="region1">Region I</option>
+        <option value="region2">Region II</option>
+        <option value="region3">Region III</option>
+        <option value="region4a">Region IV-A</option>
+        <option value="region4b">Region IV-B</option>
+        <option value="region5">Region V</option>
+        <option value="region6">Region VI</option>
+        <option value="region7">Region VII</option>
+        <option value="region8">Region VIII</option>
+        <option value="region9">Region IX</option>
+        <option value="region10">Region X</option>
+        <option value="region11">Region XI</option>
+        <option value="region12">Region XII</option>
+        <option value="region13">Region XIII (Caraga)</option>
+        <option value="barmm">BARMM</option>
+      </select>
+
+      <!-- Office (populated by region) -->
+      <div class="field-label">Select Office</div>
+      <select id="officeSelect" disabled>
+        <option value="">-- Select Office --</option>
+      </select>
+
+      <!-- Star rating -->
+      <div class="field-label">Your Rating</div>
+      <div class="radio" id="starRating">
+        <input id="rating-5" type="radio" name="rating" value="5">
+        <label for="rating-5" title="5 stars">
+          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        </label>
+        <input id="rating-4" type="radio" name="rating" value="4">
+        <label for="rating-4" title="4 stars">
+          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        </label>
+        <input id="rating-3" type="radio" name="rating" value="3">
+        <label for="rating-3" title="3 stars">
+          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        </label>
+        <input id="rating-2" type="radio" name="rating" value="2">
+        <label for="rating-2" title="2 stars">
+          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        </label>
+        <input id="rating-1" type="radio" name="rating" value="1">
+        <label for="rating-1" title="1 star">
+          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        </label>
+      </div>
+      <p class="rating-hint" id="ratingHint">Tap a star to rate</p>
+
+      <!-- Comment -->
+      <div class="field-label">Your Feedback</div>
+      <textarea id="comment" placeholder="Share your experience..."></textarea>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <button class="back-btn" onclick="location.href='index.html'">
+          <i class="fa fa-arrow-left"></i> Back
+        </button>
+        <button id="submitFeedback">
+          <i class="fa fa-paper-plane"></i> Submit
+        </button>
+      </div>
+
     </div>
-
-    <textarea id="comment" placeholder="Your feedback..."></textarea>
-    <button id="submitFeedback">Submit</button>
-    <button class="back-btn" onclick="location.href='index.html'">
-      <i class="fa-solid fa-arrow-left"></i> Back
-    </button>
   </div>
 
 </div>
 
-<script>
-const stars = document.querySelectorAll("#starRating i");
-
-stars.forEach((star, idx) => {
-  star.addEventListener('mouseover', () => {
-    stars.forEach((s, i) => {
-      s.classList.toggle('hover', i <= idx);
-    });
-  });
-
-  star.addEventListener('mouseout', () => {
-    stars.forEach(s => s.classList.remove('hover'));
-  });
-
-  star.addEventListener('click', () => {
-    stars.forEach((s, i) => {
-      s.classList.toggle('selected', i <= idx);
-    });
-  });
-});
-</script>
-
 <script type="module" src="feedback-db.js"></script>
 <script defer src="/_vercel/analytics/script.js"></script>
 
+<script>
+  // ── Region → Office cascade ──
+  const officeData = {
+    ncr:      ["Office of the Administrator","Administrative and Finance Department","Human Resource Management Division","Legal Affairs Service","Research and Development Branch","Market Development Department","Coconut Extension Training Center","Technical Services Division"],
+    car:      ["PCA CAR Regional Office"],
+    region1:  ["PCA Region I Regional Office","Pangasinan Provincial Office","La Union Provincial Office","Ilocos Sur Provincial Office","Ilocos Norte Provincial Office"],
+    region2:  ["PCA Region II Regional Office","Cagayan Provincial Office","Isabela Provincial Office","Nueva Vizcaya Provincial Office","Quirino Provincial Office"],
+    region3:  ["PCA Region III Regional Office","Bataan Provincial Office","Zambales Provincial Office","Aurora Provincial Office"],
+    region4a: ["PCA Region IV-A Regional Office","Quezon Provincial Office","Laguna Provincial Office","Batangas Provincial Office","Cavite Provincial Office","Rizal Provincial Office"],
+    region4b: ["PCA Region IV-B Regional Office","Mindoro Provincial Office","Marinduque Provincial Office","Romblon Provincial Office","Palawan Provincial Office"],
+    region5:  ["PCA Region V Regional Office","Albay Provincial Office","Camarines Norte Provincial Office","Camarines Sur Provincial Office","Sorsogon Provincial Office","Masbate Provincial Office","Catanduanes Provincial Office"],
+    region6:  ["PCA Region VI Regional Office","Iloilo Provincial Office","Negros Occidental Provincial Office","Aklan Provincial Office","Capiz Provincial Office","Antique Provincial Office","Guimaras Provincial Office"],
+    region7:  ["PCA Region VII Regional Office","Cebu Provincial Office","Bohol Provincial Office","Negros Oriental Provincial Office","Siquijor Provincial Office"],
+    region8:  ["PCA Region VIII Regional Office","Leyte Provincial Office","Southern Leyte Provincial Office","Samar Provincial Office","Eastern Samar Provincial Office","Northern Samar Provincial Office","Biliran Provincial Office"],
+    region9:  ["PCA Region IX Regional Office","Zamboanga del Norte Provincial Office","Zamboanga del Sur Provincial Office","Zamboanga Sibugay Provincial Office"],
+    region10: ["PCA Region X Regional Office","Misamis Oriental Provincial Office","Bukidnon Provincial Office","Camiguin Provincial Office","Lanao del Norte Provincial Office"],
+    region11: ["PCA Region XI Regional Office","Davao del Sur Provincial Office","Davao del Norte Provincial Office","Davao Oriental Provincial Office","Davao de Oro Provincial Office"],
+    region12: ["PCA Region XII Regional Office","South Cotabato Provincial Office","Sultan Kudarat Provincial Office","Sarangani Provincial Office"],
+    region13: ["PCA Caraga Regional Office","Agusan del Norte Provincial Office","Agusan del Sur Provincial Office","Surigao del Norte Provincial Office","Surigao del Sur Provincial Office"],
+    barmm:    ["PCA BARMM Regional Office","Maguindanao Provincial Office","Basilan Provincial Office","Sulu Provincial Office","Tawi-Tawi Provincial Office"]
+  };
+
+  const regionSelect = document.getElementById("regionSelect");
+  const officeSelect = document.getElementById("officeSelect");
+
+  regionSelect.addEventListener("change", function () {
+    const key = this.value;
+    officeSelect.innerHTML = '<option value="">-- Select Office --</option>';
+    if (officeData[key]) {
+      officeData[key].forEach(office => {
+        const opt = document.createElement("option");
+        opt.value = office;
+        opt.textContent = office;
+        officeSelect.appendChild(opt);
+      });
+      officeSelect.disabled = false;
+    } else {
+      officeSelect.disabled = true;
+    }
+  });
+
+  // ── Star rating hint ──
+  const hints = ['','Poor','Fair','Okay','Good','Excellent'];
+  document.querySelectorAll('#starRating input[name="rating"]').forEach(input => {
+    input.addEventListener('change', () => {
+      document.getElementById('ratingHint').textContent =
+        hints[parseInt(input.value)] + ' (' + input.value + '/5)';
+    });
+  });
+</script>
 </body>
 </html>

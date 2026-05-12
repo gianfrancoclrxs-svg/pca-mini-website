@@ -15,9 +15,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 document.getElementById("submitFeedback").addEventListener("click", async () => {
+  const region = document.getElementById("regionSelect").value;
   const office = document.getElementById("officeSelect").value;
   const comment = document.getElementById("comment").value;
-  const rating = document.querySelectorAll("#starRating i.selected").length;
+
+  // Read rating from checked radio input
+  const checkedStar = document.querySelector('#starRating input[name="rating"]:checked');
+  const rating = checkedStar ? parseInt(checkedStar.value) : 0;
+
+  if (!region) {
+    alert("Please select a region!");
+    return;
+  }
+
+  if (!office) {
+    alert("Please select an office!");
+    return;
+  }
 
   if (rating === 0) {
     alert("Please select a rating!");
@@ -26,14 +40,28 @@ document.getElementById("submitFeedback").addEventListener("click", async () => 
 
   try {
     await addDoc(collection(db, "feedbacks"), {
+      region,
       office,
       rating,
       comment,
       timestamp: serverTimestamp()
     });
+
     alert("Feedback submitted! Thank you.");
+
+    // Reset form
+    document.getElementById("regionSelect").value = "";
+    document.getElementById("officeSelect").innerHTML =
+      '<option value="">-- Select Office --</option>';
+    document.getElementById("officeSelect").disabled = true;
+
     document.getElementById("comment").value = "";
-    document.querySelectorAll("#starRating i.selected").forEach(s => s.classList.remove("selected"));
+
+    if (checkedStar) checkedStar.checked = false;
+
+    document.getElementById("ratingHint").textContent =
+      "Tap a star to rate";
+
   } catch (err) {
     console.error(err);
     alert("Error submitting feedback, try again.");

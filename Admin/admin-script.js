@@ -77,6 +77,7 @@ async function loadFeedbacks() {
       }
       tr.innerHTML = `
         <td>${d.office || ''}</td>
+        <td>${d.region || ''}</td>
         <td>${d.rating || ''}</td>
         <td>${d.comment || ''}</td>
         <td>${dateStr}</td>

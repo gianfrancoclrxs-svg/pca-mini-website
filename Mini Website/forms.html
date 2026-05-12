@@ -4,257 +4,544 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PCA Forms</title>
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    .section {
-      margin: 15px;
+    :root {
+      --green: #1a5c2e;
+      --green-mid: #2d7a44;
+      --green-light: #e8f3ec;
+      --gold: #c5920a;
+      --surface: #f5f7f5;
+      --white: #ffffff;
+      --border: #d0d8d2;
+      --ink: #1a1a18;
+      --muted: #5a6b60;
     }
 
-    /* Search bar */
-    .search-wrap {
-      position: relative;
-      margin-bottom: 14px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      min-height: 100vh;
     }
 
-    .search-wrap i {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(255,255,255,0.5);
-      font-size: 14px;
-      pointer-events: none;
+    /* HEADER */
+    .page-header {
+      background: var(--green);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
     }
-
-    .search-wrap input {
-      width: 100%;
-      padding: 10px 12px 10px 34px;
-      border-radius: 10px;
-      border: 1px solid rgba(0,0,0,0.25);
-      background: rgba(0,0,0,0.25);
-      color: white;
-      font-family: inherit;
-      font-size: 13px;
-      box-sizing: border-box;
-    }
-
-    .search-wrap input::placeholder { color: rgba(255,255,255,0.7); }
-    .search-wrap input:focus { outline: none; border-color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.35); }
-
-    /* Category filter pills */
-    .filter-row {
+    .header-inner {
       display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 8px;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-title { color: white; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title p { font-size: 11px; opacity: 0.75; margin-top: 1px; }
+
+    /* HERO BAND */
+    .forms-hero {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+      padding: 24px 16px 20px;
+      color: white;
+    }
+    .forms-hero h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .forms-hero p {
+      font-size: 13px;
+      opacity: 0.82;
+      margin-top: 6px;
+      line-height: 1.5;
     }
 
-    .filter-pill {
-      padding: 5px 13px;
-      border-radius: 20px;
-      border: 1.5px solid rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.85);
+    /* CATEGORY LABEL */
+    .category-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 16px 8px;
       font-size: 11px;
       font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      letter-spacing: 0.3px;
-      transition: background 0.2s, border-color 0.2s;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .category-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
     }
 
-    .filter-pill.active,
-    .filter-pill:hover {
-      background: rgba(255,255,255,0.28);
-      border-color: white;
-      color: white;
+    /* FORM CARDS */
+    .forms-list {
+      padding: 0 16px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    /* Form card */
     .form-card {
-      margin-bottom: 12px;
-      padding: 15px;
-      border-radius: 15px;
-      background: rgba(0,0,0,0.22);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(0,0,0,0.15);
-      color: white;
-      transition: background 0.2s;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .form-card:hover { background: rgba(0,0,0,0.30); }
-
-    .form-card-header {
+    .form-card-top {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 8px;
+      gap: 14px;
+      padding: 16px;
     }
 
     .form-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      font-size: 20px;
+      color: var(--green);
     }
 
-    .form-title {
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.3;
-      margin-bottom: 3px;
-    }
-
-    .form-category {
-      display: inline-block;
-      padding: 2px 9px;
-      border-radius: 20px;
+    .form-info { flex: 1; min-width: 0; }
+    .form-code {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: rgba(109,224,74,0.25);
-      border: 1px solid rgba(109,224,74,0.5);
-      color: #a5d6a7;
+      color: var(--green-mid);
+      background: var(--green-light);
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 5px;
     }
-
+    .form-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
     .form-desc {
       font-size: 12px;
-      opacity: 0.7;
+      color: var(--muted);
+      margin-top: 4px;
       line-height: 1.5;
-      margin: 8px 0 10px;
     }
 
-    /* Button row */
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .view-btn, .dl-btn {
+    .form-badge {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--gold);
+      font-weight: 600;
+      background: #fdf6e3;
+      border: 1px solid #e8d5a0;
+      border-radius: 12px;
+      padding: 3px 8px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .form-card-footer {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-fill {
       flex: 1;
-      padding: 9px;
-      border-radius: 10px;
+      background: var(--green);
+      color: white;
       border: none;
-      font-size: 13px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      transition: filter 0.2s, transform 0.15s;
-    }
-
-    .view-btn {
-      background: rgba(255,255,255,0.18);
-      color: white;
-      border: 1.5px solid rgba(255,255,255,0.35);
-    }
-
-    .view-btn:hover  { background: rgba(255,255,255,0.28); }
-    .view-btn:active { transform: scale(0.97); }
-
-    .dl-btn {
-      background: linear-gradient(135deg, #4caf50, #66bb6a);
-      color: white;
-      box-shadow: 0 3px 10px rgba(76,175,80,0.35);
-    }
-
-    .dl-btn:hover  { filter: brightness(1.1); }
-    .dl-btn:active { transform: scale(0.97); }
-
-    /* No download available */
-    .no-file {
-      font-size: 11px;
-      opacity: 0.5;
-      text-align: center;
-      padding: 6px 0;
-    }
-
-    /* State messages */
-    .state-msg {
-      text-align: center;
-      color: rgba(255,255,255,0.7);
-      font-size: 13px;
-      padding: 30px 0;
-    }
-
-    .state-msg i {
-      font-size: 32px;
-      display: block;
-      margin-bottom: 10px;
-      opacity: 0.5;
-    }
-
-    /* Home button */
-    .home-btn {
-      display: block;
-      width: calc(100% - 30px);
-      margin: 0 15px 20px;
-      padding: 11px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.12);
-      color: white;
-      font-family: inherit;
+      padding: 12px 16px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      text-align: center;
-      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-fill:active {
+      background: var(--green-mid);
+      transform: scale(0.98);
+    }
+    .btn-fill i { font-size: 14px; }
+
+    .btn-info {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    .btn-info:hover { background: #eaeee9; }
+
+    /* INFO BOX */
+    .info-box {
+      margin: 16px 16px 0;
+      background: #e8f3ec;
+      border: 1px solid #b8d9c2;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .info-box i { color: var(--green); font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+    .info-box p { font-size: 12px; color: #1a5c2e; line-height: 1.5; }
+
+    /* COMING SOON CARD */
+    .form-card.coming-soon { opacity: 0.65; }
+    .form-card.coming-soon .btn-fill {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .soon-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      background: var(--border);
+      border-radius: 12px;
+      padding: 3px 8px;
+      flex-shrink: 0;
     }
 
-    .home-btn:hover { background: rgba(255,255,255,0.22); }
+    /* DIRECTORY PANEL */
+    .dir-panel {
+      border-top: 1px solid var(--border);
+      background: #f9fbf9;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .dir-panel.open {
+      max-height: 700px;
+    }
+
+    .dir-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px 9px;
+      border-bottom: 1px solid #e0e8e2;
+    }
+    .dir-header i { color: var(--green); font-size: 14px; }
+    .dir-header span {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--green);
+    }
+
+    .dir-region {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5ebe7;
+    }
+    .dir-region:last-child {
+      border-bottom: none;
+      padding-bottom: 14px;
+    }
+
+    .dir-region-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: #fdf6e3;
+      border: 1px solid #e8d5a0;
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 7px;
+    }
+
+    .dir-office {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .dir-dept {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .dir-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #3a4a3f;
+      margin-bottom: 5px;
+    }
+    .dir-row i {
+      color: var(--green-mid);
+      font-size: 13px;
+      flex-shrink: 0;
+      width: 14px;
+      text-align: center;
+    }
+
+    .dir-no-data {
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .dir-no-data i { color: #bbb; font-size: 20px; margin-top: 1px; flex-shrink: 0; }
+    .dir-no-data p { font-size: 12px; color: var(--muted); line-height: 1.55; }
   </style>
 </head>
 <body>
-<div class="mobile-frame">
 
-  <header class="header">
-    <h2>Forms &amp; Letters</h2>
-  </header>
-
-  <div class="section">
-    <!-- Search -->
-    <div class="search-wrap">
-      <i class="fa fa-search"></i>
-      <input type="text" id="searchInput" placeholder="Search forms..." oninput="filterForms()">
-    </div>
-
-    <!-- Category pills -->
-    <div class="filter-row" id="filterRow">
-      <button class="filter-pill active" data-cat="all" onclick="setFilter(this)">All</button>
-    </div>
-
-    <!-- Cards -->
-    <div id="formsContainer">
-      <div class="state-msg">
-        <i class="fa fa-spinner fa-spin"></i>
-        Loading forms...
+  <header class="page-header">
+    <div class="header-inner">
+      <a href="index.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div class="header-title">
+        <h1>PCA Forms</h1>
+        <p>Philippine Coconut Authority</p>
       </div>
     </div>
+  </header>
+
+  <div class="forms-hero">
+    <h2>Online Forms</h2>
+    <p>Fill out PCA forms directly on your phone. Submit digitally and receive your application number instantly.</p>
   </div>
 
-  <button class="home-btn" onclick="window.location.href='index.html'">
-    <i class="fa fa-house" style="margin-right:6px;"></i> Home
-  </button>
+  <div class="info-box">
+    <i class="fa-solid fa-circle-info"></i>
+    <p>After completing a form, you will receive an <strong>application number</strong> and directions — including the office to visit, appointment date, and contact number.</p>
+  </div>
 
-</div>
+  <div class="category-label">
+    <i class="fa-solid fa-leaf" style="color: var(--green);"></i>
+    Farmer Registration
+  </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script defer src="/_vercel/analytics/script.js"></script>
-<script src="forms-script.js"></script>
+  <div class="forms-list">
+
+    <!-- ===== NCFRS FORM ===== -->
+    <div class="form-card">
+      <div class="form-card-top">
+        <div class="form-icon">
+          <i class="fa-solid fa-id-card"></i>
+        </div>
+        <div class="form-info">
+          <span class="form-code">IMSU-11-2020</span>
+          <div class="form-name">NCFRS Enrollment Form</div>
+          <div class="form-desc">National Coconut Farmers' Registry System — for new and existing farmer registration.</div>
+        </div>
+        <span class="form-badge"><i class="fa-solid fa-mobile-screen-button"></i> Mobile</span>
+      </div>
+      <div class="form-card-footer">
+        <a href="field.html" class="btn-fill">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Fill Form
+        </a>
+        <a href="https://pca.gov.ph/ncfrs-checker" target="_blank" class="btn-info">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          Check Registry
+        </a>
+        <button class="btn-info" onclick="toggleDir('ncfrs-dir', this)">
+          <i class="fa-solid fa-location-dot"></i>
+          Directory
+        </button>
+      </div>
+
+      <!-- NCFRS DIRECTORY -->
+      <div class="dir-panel" id="ncfrs-dir">
+        <div class="dir-header">
+          <i class="fa-solid fa-building"></i>
+          <span>Office Directory</span>
+        </div>
+
+        <div class="dir-region">
+          <span class="dir-region-label">NCR</span>
+          <div class="dir-office">Philippine Coconut Authority</div>
+          <div class="dir-dept">Office of the Administrator — 7th Floor</div>
+          <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Elliptical Road, Diliman, Quezon City</div>
+          <div class="dir-row"><i class="fa-solid fa-phone"></i> (02) 8920-4062</div>
+          <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+        </div>
+
+        <div class="dir-region">
+          <span class="dir-region-label">Region III — Central Luzon</span>
+          <div class="dir-office">PCA Regional Office No. III</div>
+          <div class="dir-dept">Farmer Services Division</div>
+          <div class="dir-row"><i class="fa-solid fa-location-dot"></i> San Fernando, Pampanga</div>
+          <div class="dir-row"><i class="fa-solid fa-phone"></i> (045) 961-2345</div>
+          <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+        </div>
+
+        <div class="dir-region">
+          <span class="dir-region-label">Region IV-A — CALABARZON</span>
+          <div class="dir-office">PCA Regional Office No. IV-A</div>
+          <div class="dir-dept">Farmer Services Division</div>
+          <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Calamba, Laguna</div>
+          <div class="dir-row"><i class="fa-solid fa-phone"></i> (049) 545-6789</div>
+          <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+        </div>
+
+        <div class="dir-region">
+          <span class="dir-region-label">Region VI — Western Visayas</span>
+          <div class="dir-office">PCA Regional Office No. VI</div>
+          <div class="dir-dept">Farmer Services Division</div>
+          <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Iloilo City</div>
+          <div class="dir-row"><i class="fa-solid fa-phone"></i> (033) 321-1234</div>
+          <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+        </div>
+
+        <div class="dir-region">
+          <span class="dir-region-label">Region XI — Davao</span>
+          <div class="dir-office">PCA Regional Office No. XI</div>
+          <div class="dir-dept">Farmer Services Division</div>
+          <div class="dir-row"><i class="fa-solid fa-location-dot"></i> Davao City</div>
+          <div class="dir-row"><i class="fa-solid fa-phone"></i> (082) 221-5678</div>
+          <div class="dir-row"><i class="fa-solid fa-clock"></i> Mon–Fri, 8:00 AM – 5:00 PM</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== SEEDLING FORM (Coming Soon) ===== -->
+    <div class="form-card coming-soon">
+      <div class="form-card-top">
+        <div class="form-icon" style="background:#f0f0ec; color:#aaa;">
+          <i class="fa-solid fa-seedling"></i>
+        </div>
+        <div class="form-info">
+          <span class="form-code" style="background:#f0f0ec; color:#888;">PCA-SEED-01</span>
+          <div class="form-name">Seedling Distribution Request</div>
+          <div class="form-desc">Apply for coconut seedlings under PCA's replanting and rehabilitation programs.</div>
+        </div>
+        <span class="soon-badge">Coming Soon</span>
+      </div>
+      <div class="form-card-footer">
+        <button class="btn-fill" disabled>
+          <i class="fa-solid fa-lock"></i>
+          Not Yet Available
+        </button>
+        <button class="btn-info" onclick="toggleDir('seed-dir', this)">
+          <i class="fa-solid fa-location-dot"></i>
+          Directory
+        </button>
+      </div>
+
+      <!-- SEEDLING DIRECTORY — Not yet available -->
+      <div class="dir-panel" id="seed-dir">
+        <div class="dir-no-data">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <p>Directory not yet available for this form. Please check back once the form is activated, or contact your nearest PCA provincial office.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FINANCIAL ASSISTANCE FORM (Coming Soon) ===== -->
+    <div class="form-card coming-soon">
+      <div class="form-card-top">
+        <div class="form-icon" style="background:#f0f0ec; color:#aaa;">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+        </div>
+        <div class="form-info">
+          <span class="form-code" style="background:#f0f0ec; color:#888;">PCA-FIN-02</span>
+          <div class="form-name">Financial Assistance Application</div>
+          <div class="form-desc">Request financial assistance for coconut farmers affected by calamities or economic hardship.</div>
+        </div>
+        <span class="soon-badge">Coming Soon</span>
+      </div>
+      <div class="form-card-footer">
+        <button class="btn-fill" disabled>
+          <i class="fa-solid fa-lock"></i>
+          Not Yet Available
+        </button>
+        <button class="btn-info" onclick="toggleDir('fin-dir', this)">
+          <i class="fa-solid fa-location-dot"></i>
+          Directory
+        </button>
+      </div>
+
+      <!-- FINANCIAL DIRECTORY — Not yet available -->
+      <div class="dir-panel" id="fin-dir">
+        <div class="dir-no-data">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <p>Directory not yet available for this form. Please check back once the form is activated, or contact your nearest PCA provincial office.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleDir(id, btn) {
+      var panel = document.getElementById(id);
+      var isOpen = panel.classList.contains('open');
+
+      // Close all panels and reset all directory buttons
+      document.querySelectorAll('.dir-panel').forEach(function(p) {
+        p.classList.remove('open');
+      });
+      document.querySelectorAll('.btn-info[onclick*="toggleDir"]').forEach(function(b) {
+        b.innerHTML = '<i class="fa-solid fa-location-dot"></i> Directory';
+      });
+
+      // If it wasn't open, open it
+      if (!isOpen) {
+        panel.classList.add('open');
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Close';
+      }
+    }
+  </script>
+
 </body>
 </html>
