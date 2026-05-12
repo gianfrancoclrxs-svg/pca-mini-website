@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PCA Admin Dashboard</title>
-<link rel="stylesheet" href="style.css">
 <style>
   body { 
     font-family: Arial, sans-serif; 
     background: #f4f4f4; 
+    margin: 0;
   }
   header { 
     background: #0d6d05; 
@@ -19,7 +19,8 @@
   nav { 
     display: flex; 
     justify-content: center; 
-    gap: 15px; margin: 15px 0; 
+    gap: 15px;
+    margin: 15px 0; 
   }
   nav button { 
     padding: 10px 20px; 
@@ -27,7 +28,8 @@
     border-radius: 8px; 
     cursor: pointer; 
     background: #4CAF50; 
-    color: white; 
+    color: white;
+    font-size: 15px;
   }
   nav button.active { 
     background: #0d6d05; 
@@ -39,12 +41,17 @@
   section.active { 
     display: block; 
   }
-
-  input[type="text"] { 
-    width: 300px; 
-    padding: 8px; 
-    margin-bottom: 10px; 
+  input[type="text"],
+  input[type="file"],
+  textarea { 
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
   }
+  input[type="text"] { width: 300px; }
+  textarea { width: 300px; height: 80px; display: block; }
   table { 
     width: 100%; 
     border-collapse: collapse; 
@@ -54,27 +61,38 @@
   th, td { 
     padding: 10px; 
     border: 1px solid #ddd; 
-    text-align: left; 
+    text-align: left;
+    vertical-align: top;
   }
   th { 
     background: #0d6d05; 
     color: white; 
   }
+  tr:nth-child(even) { background: #f9f9f9; }
   button.action-btn { 
     padding: 5px 10px; 
     border: none; 
     border-radius: 6px; 
     cursor: pointer; 
-    margin-right: 5px; 
+    margin-right: 5px;
+    font-size: 13px;
   }
-  .edit-btn { 
-    background: #2196F3; 
-    color: white; 
+  .edit-btn { background: #2196F3; color: white; }
+  .delete-btn { background: #f44336; color: white; }
+  #uploadForm input, #uploadForm textarea, #uploadForm button {
+    display: block;
+    margin-bottom: 10px;
   }
-  .delete-btn { 
-    background: #f44336; 
-    color: white; 
-    }
+  #uploadForm button {
+    padding: 8px 20px;
+    background: #0d6d05;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  #uploadStatus { font-weight: bold; margin-top: 8px; }
 </style>
 </head>
 
@@ -92,7 +110,7 @@
 
 <section id="schedules" class="active">
   <h2>All Schedules</h2>
-  <input type="text" id="searchSchedules" placeholder="Search Schedules..." onkeyup="filterTable('schedulesTable', this.value)">
+  <input type="text" placeholder="Search Schedules..." onkeyup="filterTable('schedulesTable', this.value)">
   <table id="schedulesTable">
     <thead>
       <tr>
@@ -112,13 +130,14 @@
 
 <section id="feedbacks">
   <h2>Feedbacks</h2>
-  <input type="text" id="searchFeedbacks" placeholder="Search Feedbacks..." onkeyup="filterTable('feedbacksTable', this.value)">
+  <input type="text" placeholder="Search Feedbacks..." onkeyup="filterTable('feedbacksTable', this.value)">
   <table id="feedbacksTable">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Message</th>
+        <!-- FIXED: was Name/Email/Message — now matches what Firestore actually stores -->
+        <th>Office</th>
+        <th>Rating</th>
+        <th>Comment</th>
         <th>Date</th>
         <th>Actions</th>
       </tr>
@@ -129,27 +148,28 @@
 
 <section id="forms">
   <h2>Forms</h2>
-  <input type="text" id="searchForms" placeholder="Search Forms..." onkeyup="filterTable('formsTable', this.value)">
+  <input type="text" placeholder="Search Forms..." onkeyup="filterTable('formsTable', this.value)">
   <table id="formsTable">
     <thead>
       <tr>
         <th>Title</th>
         <th>Type</th>
-        <th>File URL</th>
+        <th>File</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
+
   <h3>Upload New Form</h3>
-    <form id="uploadForm">
-        <input type="text" id="formTitle" placeholder="Title" required />
-        <input type="text" id="formCategory" placeholder="Type" required />
-        <textarea id="formDescription" placeholder="Description"></textarea>
-        <input type="file" id="formFile" accept="application/pdf" required />
-        <button type="submit">Upload</button>
-    </form>
-    <p id="uploadStatus"></p>
+  <form id="uploadForm">
+    <input type="text" id="formTitle" placeholder="Title" required />
+    <input type="text" id="formCategory" placeholder="Type/Category" required />
+    <textarea id="formDescription" placeholder="Description (optional)"></textarea>
+    <input type="file" id="formFile" accept="application/pdf" required />
+    <button type="submit">Upload Form</button>
+  </form>
+  <p id="uploadStatus"></p>
 </section>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>

@@ -6,6 +6,7 @@
 <title>Book Appointment</title>
 
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
   .card {
@@ -17,45 +18,174 @@
     color: white;
   }
 
-  input, select, textarea, button {
+  input, select, textarea {
+    width: 100%;
+    margin: 6px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.25);
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.7);
+  }
+
+  select option {
+    color: #111;
+    background: #fff;
+  }
+
+  select optgroup {
+    color: #555;
+    font-style: italic;
+  }
+
+  button {
     width: 100%;
     margin: 6px 0;
     padding: 10px;
     border-radius: 10px;
     border: none;
-  }
-
-  button {
     background: #0d6d05;
     color: white;
     cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+  }
+
+  button:hover {
+    background: #155c0c;
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.25);
   }
 
   .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 4px;
   }
 
   .calendar button {
-    padding: 10px;
+    padding: 8px 2px;
     border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
   }
 
-  .green { background: #4CAF50; }
-  .red { background: #f44336; }
-  .selected { border: 2px solid yellow; }
-
-  button {
-    font-size: 14px;
-    padding: 8px 10px;
+  .day-labels {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
   }
+
+  .day-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.7;
+    padding: 2px 0;
+  }
+
+  .green { background: #4CAF50 !important; color: white; }
+  .red   { background: #f44336 !important; color: white; cursor: not-allowed !important; }
+  .orange{ background: #FFA726 !important; color: white; cursor: not-allowed !important; }
+  .selected { outline: 2px solid yellow; outline-offset: 1px; }
+
+  .month-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0 6px;
+  }
+
+  .month-nav h4 { font-size: 14px; font-weight: 700; }
 
   .month-nav button {
-    width: auto;
-    padding: 5px 10px;
-    font-size: 14px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 16px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
   }
+
+  .month-nav button:hover { background: rgba(255,255,255,0.25); }
+
+  #dateDisplay {
+    font-size: 12px;
+    opacity: 0.8;
+    margin: 4px 0 8px;
+    min-height: 16px;
+  }
+
+  .review-row {
+    display: flex;
+    gap: 8px;
+    margin: 5px 0;
+    font-size: 13px;
+  }
+
+  .review-label {
+    opacity: 0.7;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .review-val { font-weight: 600; }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+    margin: 10px 0;
+  }
+
+  .note {
+    font-size: 11px;
+    opacity: 0.75;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    opacity: 0.8;
+    margin: 10px 0 2px;
+  }
+
+
+  .home-btn {
+    display: block;
+    width: calc(100% - 30px);
+    margin: 0 15px 20px;
+    padding: 11px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s;
+    box-sizing: border-box;
+  }
+  .home-btn:hover { background: rgba(255,255,255,0.22); }
 </style>
 </head>
 
@@ -68,17 +198,18 @@
 
   <div class="card">
 
+    <!-- STEP 1: Personal Information -->
     <div id="step1">
       <h3>Personal Information</h3>
 
-      <input id="lastName" placeholder="Last Name *">
-      <input id="firstName" placeholder="First Name *">
+      <input id="lastName"   placeholder="Last Name *">
+      <input id="firstName"  placeholder="First Name *">
       <input id="middleName" placeholder="Middle Name (Optional)">
-      <input id="suffix" placeholder="Suffix (Optional)">
-      <input id="address" placeholder="Address *">
-      <input id="email" placeholder="Email *">
-      <input id="phone" placeholder="Phone *">
-      <input id="age" type="number" placeholder="Age *">
+      <input id="suffix"     placeholder="Suffix (Optional)">
+      <input id="address"    placeholder="Address *">
+      <input id="email"      placeholder="Email *" type="email">
+      <input id="phone"      placeholder="Phone *" type="tel">
+      <input id="age"        placeholder="Age *" type="number" min="0">
 
       <select id="civilStatus">
         <option value="">Civil Status *</option>
@@ -89,16 +220,44 @@
         <option>Separated</option>
         <option>Annulled</option>
         <option>Domestic Partnership / Cohabiting</option>
-    </select>
+      </select>
 
       <input id="religion" placeholder="Religion *">
 
-      <button onclick="goToStep2()">Next</button>
-      <button onclick="window.location.href='index.html'">Home</button>
+      <button onclick="goToStep2()">Next →</button>
+      
     </div>
 
+    <!-- STEP 2: Schedule Selection -->
     <div id="step2" style="display:none;">
       <h3>Schedule Selection</h3>
+
+      <!-- PURPOSE OF SCHEDULE (new) -->
+      <select id="purpose">
+        <option value="">Purpose of Schedule *</option>
+        <optgroup label="Registration &amp; Licensing">
+          <option>Coconut Farm Registration</option>
+          <option>Coconut Seedling Requisition</option>
+          <option>License to Operate (Copra Buyer)</option>
+          <option>License to Operate (Desiccated Coconut)</option>
+          <option>License to Operate (Coco Chemical)</option>
+        </optgroup>
+        <optgroup label="Financial Assistance">
+          <option>Coconut Farmers' Financial Assistance</option>
+          <option>Farm Inputs &amp; Implements</option>
+          <option>Replanting Subsidy</option>
+        </optgroup>
+        <optgroup label="Technical Services">
+          <option>Technical Consultation</option>
+          <option>Crop Insurance Inquiry</option>
+          <option>Research &amp; Development Inquiry</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option>Document Request / Certification</option>
+          <option>Complaint / Feedback</option>
+          <option>General Inquiry</option>
+        </optgroup>
+      </select>
 
       <select id="region">
         <option value="">Select Region *</option>
@@ -118,38 +277,44 @@
         <option>Region XII (SOCCSKSARGEN)</option>
         <option>Region XIII (Caraga)</option>
         <option>BARMM (Bangsamoro Autonomous Region in Muslim Mindanao)</option>
-    </select>
+      </select>
 
-      <p>Select Date</p>
-      <div class="month-nav" style="display:flex; justify-content:space-between; align-items:center;">
+      <p class="section-label">Select Date</p>
+      <div class="month-nav">
         <button onclick="changeMonth(-1)">←</button>
         <h4 id="monthLabel"></h4>
         <button onclick="changeMonth(1)">→</button>
       </div>
+      <div class="day-labels" id="dayLabels"></div>
       <div class="calendar" id="calendar"></div>
+      <p id="dateDisplay">No date selected</p>
+
       <select id="timeSlot">
         <option value="">Select Time *</option>
-        <option>AM</option>
-        <option>PM</option>
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
       </select>
-      <br>
-      <p>Note: <i>The Philippine government implemented a temporary four-day on-site workweek (with one day work-from-home) starting March 9, 2026, for executive branch agencies via Memorandum Circular No. 114, ordered by President Marcos to conserve energy.</i></p>
 
+      <p class="note"><i>Note: Per Memorandum Circular No. 114, PCA observes a 4-day on-site workweek (Monday–Thursday). Fridays are work-from-home and unavailable for walk-in appointments.</i></p>
 
-      <button onclick="goToStep3()">Next</button>
+      <button onclick="goToStep3()">Next →</button>
+      <button class="btn-secondary" onclick="backToStep1()">← Back</button>
     </div>
 
+    <!-- STEP 3: Review -->
     <div id="step3" style="display:none;">
       <h3>Review Your Appointment</h3>
-
       <div id="reviewData"></div>
-
-      <button onclick="editInfo()">Edit</button>
-      <button onclick="finalSubmit()">Submit & Download PDF</button>
-      <button onclick="window.location.href='index.html'">Home</button>
+      <button class="btn-secondary" onclick="editInfo()">← Edit</button>
+      <button onclick="finalSubmit()">Submit &amp; Download PDF</button>
+      
     </div>
 
   </div>
+
+  <button class="home-btn" onclick="window.location.href='index.html'">
+    <i class="fa fa-house" style="margin-right:6px;"></i> Home
+  </button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
