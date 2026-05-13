@@ -167,6 +167,7 @@ async function loadFeedbacks() {
       if (d.region) regions.add(d.region);
       if (d.office) offices.add(d.office);
     });
+    buildFilterChips('ratingChips', ['5 ⭐', '4 ⭐', '3 ⭐', '2 ⭐', '1 ⭐'], ['5','4','3','2','1']);
     buildFilterChips('regionChips', Array.from(regions).sort());
     buildFilterChips('officeChips', Array.from(offices).sort());
     renderFeedbacks();
@@ -177,14 +178,14 @@ async function loadFeedbacks() {
   }
 }
 
-function buildFilterChips(containerId, values) {
+function buildFilterChips(containerId, labels, vals) {
   var container = document.getElementById(containerId);
   container.innerHTML = '<span class="filter-chip active" data-val="all">All</span>';
-  values.forEach(function(v) {
+  labels.forEach(function(label, i) {
     var chip = document.createElement('span');
     chip.className = 'filter-chip';
-    chip.dataset.val = v;
-    chip.textContent = v;
+    chip.dataset.val = vals ? vals[i] : label;
+    chip.textContent = label;
     container.appendChild(chip);
   });
   container.querySelectorAll('.filter-chip').forEach(function(chip) {
@@ -258,8 +259,16 @@ function openFilterPopup(e) {
   var rect    = btn.getBoundingClientRect();
   pendingFilters = Object.assign({}, activeFilters);
   syncChipsToState();
+  var popupWidth = Math.min(320, window.innerWidth - 16);
+  popup.style.width = popupWidth + 'px';
+  popup.style.minWidth = 'unset';
+  var idealLeft = rect.left + window.scrollX - 10;
+  var clampedLeft = Math.min(
+    Math.max(8, idealLeft),
+    window.innerWidth + window.scrollX - popupWidth - 8
+  );
   popup.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
-  popup.style.left = Math.max(8, rect.left + window.scrollX - 10) + 'px';
+  popup.style.left = clampedLeft + 'px';
   overlay.classList.add('open');
 }
 
