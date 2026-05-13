@@ -1304,9 +1304,15 @@ function submitForm() {
       // ── Trigger local download ──
       var blobUrl = URL.createObjectURL(pdfBlob);
       var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      if (isIOS) {
-        window.open(blobUrl, '_blank');
-      } else {
+        if (isIOS) {
+          // iOS Safari can't open blob URLs — convert to base64 data URL instead
+          var reader = new FileReader();
+          reader.onload = function () {
+            var dataUrl = reader.result; // "data:application/pdf;base64,..."
+            window.open(dataUrl, '_blank');
+          };
+          reader.readAsDataURL(pdfBlob);
+        } else {
         var a = document.createElement('a');
         a.href = blobUrl;
         a.download = fileName;
@@ -1456,7 +1462,13 @@ function downloadSlip() {
         var blobUrl = URL.createObjectURL(pdfBlob);
         var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         if (isIOS) {
-          window.open(blobUrl, '_blank');
+          // iOS Safari can't open blob URLs — convert to base64 data URL instead
+          var reader = new FileReader();
+          reader.onload = function () {
+            var dataUrl = reader.result; // "data:application/pdf;base64,..."
+            window.open(dataUrl, '_blank');
+          };
+          reader.readAsDataURL(pdfBlob);
         } else {
           var a = document.createElement('a');
           a.href = blobUrl;
