@@ -780,6 +780,9 @@
   <button class="btn btn-primary" id="btn-next">Next →</button>
 </div>
 
+<!-- PDF generation libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <!-- Firebase compat SDK (same version as field.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1154,50 +1157,192 @@ function submitForm() {
     return '<div class="conf-row"><span class="conf-key">' + r[0] + '<\/span><span class="conf-val">' + r[1] + '<\/span><\/div>';
   }).join('');
 
-  // ── Save to Firestore ──
-  (function saveToFirestore() {
-    try {
-      var record = {
-        applicant_id: ref,
-        fullname:     fullName,
-        contact:      email + (phone ? ' / ' + phone : ''),
-        form:         'Meeting Scheduler',
-        meeting_date: selectedDate || '',
-        meeting_time: selectedTime || '',
-        duration:     duration,
-        meeting_type: selectedMtgType,
-        platform:     platform || '',
-        region:       regionLabel || '',
-        office:       officeVal || '',
-        purpose:      purpose,
-        participants: participants,
-        special:      special,
-        createdAt:    now.toISOString(),
-        pdf:          'MTG_' + lastName + '_' + firstName + '_' + datePart + '.html'
-      };
-      firebase.firestore().collection('submissions').add(record).catch(function(e) {
-        console.error('Firestore save failed:', e);
-      });
-    } catch(e) {
-      console.error('Firestore error:', e);
-    }
-  })();
+  // ── Build base record (pdf will be updated to base64 after generation) ──
+  var fileName = 'MTG_' + lastName + '_' + firstName + '_' + datePart + '.pdf';
+  var record = {
+    applicant_id: ref,
+    fullname:     fullName,
+    contact:      email + (phone ? ' / ' + phone : ''),
+    form:         'Meeting Scheduler',
+    meeting_date: selectedDate || '',
+    meeting_time: selectedTime || '',
+    duration:     duration,
+    meeting_type: selectedMtgType,
+    platform:     platform || '',
+    region:       regionLabel || '',
+    office:       officeVal || '',
+    purpose:      purpose,
+    participants: participants,
+    special:      special,
+    createdAt:    now.toISOString(),
+    pdf:          fileName
+  };
 
-  // ── Show confirmation ──
+  // ── Show confirmation immediately (don't wait for PDF) ──
   document.getElementById('main-wrap').style.display = 'none';
   document.getElementById('nav-bar').style.display = 'none';
   document.querySelector('.form-hero').style.display = 'none';
   document.querySelector('.progress-wrap').style.display = 'none';
   document.getElementById('confirmation-screen').classList.add('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // ── Generate PDF as base64, then save to Firestore (same logic as print.js) ──
+  (async function generateAndSave() {
+    try {
+      // Build the slip HTML (reuse downloadSlip's HTML builder)
+      var d = window._mtgData;
+
+      function slipRow(key, val) {
+        return '<div class="sr"><span class="sk">' + key + '<\/span><span class="sv">' + (val || '\u2014') + '<\/span><\/div>';
+      }
+      function slipSection(title, content) {
+        return '<div class="ss"><div class="st">' + title + '<\/div>' + content + '<\/div>';
+      }
+
+      var secContact = slipRow('Full Name', d.fullName) +
+                       slipRow('Email', d.email) +
+                       (d.phone ? slipRow('Phone', d.phone) : '');
+
+      var secMeeting = slipRow('Date', d.date) +
+                       slipRow('Time', d.time) +
+                       slipRow('Duration', d.duration) +
+                       slipRow('Type', d.type) +
+                       (d.type === 'Virtual (Video Call)' && d.platform ? slipRow('Platform', d.platform) : '') +
+                       (d.type === 'In-person' && d.region ? slipRow('Region', d.region) : '') +
+                       (d.type === 'In-person' && d.office ? slipRow('Office', d.office) : '');
+
+      var secNotes = slipRow('Purpose', d.purpose) +
+                     (d.participants ? slipRow('Participants', d.participants) : '') +
+                     (d.special ? slipRow('Special Notes', d.special) : '');
+
+      var secInfo = slipRow('Submitted', d.submittedAt) +
+                    '<p style="font-size:11px;color:#aaa;margin-top:8px;">This is a meeting request slip. Your meeting is subject to confirmation by PCA staff via email.<\/p>';
+
+      var css = [
+        'body{font-family:Arial,sans-serif;margin:0;padding:16px;background:#f5f5f5;}',
+        '.slip{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12);}',
+        '.slip-header{background:linear-gradient(135deg,#1a5c2e,#2d7a44);color:#fff;padding:24px 20px;text-align:center;}',
+        '.slip-header img{width:72px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}',
+        '.slip-header h1{font-size:20px;margin:0 0 4px;}',
+        '.slip-header p{font-size:12px;opacity:.8;margin:0;}',
+        '.ref-band{background:#e8f3ec;border-bottom:1px solid #c8d8cc;padding:12px 20px;text-align:center;}',
+        '.ref-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2d7a44;}',
+        '.ref-code{font-family:monospace;font-size:22px;font-weight:700;color:#1a5c2e;letter-spacing:.1em;}',
+        '.ss{padding:14px 20px;border-bottom:1px solid #f0f0e8;}',
+        '.ss:last-of-type{border-bottom:none;}',
+        '.st{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#c5920a;background:#fdf6e3;border:1px solid #e8d5a0;border-radius:4px;padding:2px 8px;display:inline-block;margin-bottom:10px;}',
+        '.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f0;font-size:13px;}',
+        '.sr:last-of-type{border-bottom:none;}',
+        '.sk{color:#888;flex-shrink:0;width:130px;}',
+        '.sv{font-weight:600;color:#1a1a18;text-align:right;flex:1;}',
+        '.slip-footer{background:#1a5c2e;color:rgba(255,255,255,.7);text-align:center;padding:14px;font-size:11px;}'
+      ].join('');
+
+      var slipHtml = [
+        '<!DOCTYPE html><html lang="en"><head>',
+        '<meta charset="UTF-8">',
+        '<style>' + css + '<\/style>',
+        '<\/head><body>',
+        '<div class="slip">',
+          '<div class="slip-header">',
+            '<img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" crossorigin="anonymous" alt="PCA">',
+            '<h1>Philippine Coconut Authority<\/h1>',
+            '<p>Meeting Request Slip<\/p>',
+          '<\/div>',
+          '<div class="ref-band">',
+            '<div class="ref-label">Reference Number<\/div>',
+            '<div class="ref-code">' + d.ref + '<\/div>',
+          '<\/div>',
+          slipSection('Contact Information', secContact),
+          slipSection('Meeting Details', secMeeting),
+          slipSection('Agenda and Notes', secNotes),
+          slipSection('Submission Info', secInfo),
+          '<div class="slip-footer">Philippine Coconut Authority | pca.gov.ph<\/div>',
+        '<\/div>',
+        '<\/body><\/html>'
+      ].join('');
+
+      // Render into hidden iframe
+      var iframe = document.createElement('iframe');
+      iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:680px;height:900px;border:none;visibility:hidden;';
+      document.body.appendChild(iframe);
+
+      await new Promise(function(resolve) {
+        iframe.onload = resolve;
+        iframe.srcdoc = slipHtml;
+      });
+
+      // Give fonts/images time to load
+      await new Promise(function(r) { setTimeout(r, 1000); });
+
+      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      var canvas = await html2canvas(iframeDoc.body, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#f5f5f5',
+        width: 680,
+        windowWidth: 680
+      });
+      document.body.removeChild(iframe);
+
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
+      var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+      var pageW = pdf.internal.pageSize.getWidth();
+      var pageH = pdf.internal.pageSize.getHeight();
+      var imgH  = (canvas.height / canvas.width) * pageW;
+
+      var posY = 0;
+      while (posY < imgH - 5) {
+        pdf.addImage(imgData, 'JPEG', 0, -posY, pageW, imgH);
+        posY += pageH;
+        if (posY < imgH - 5) pdf.addPage();
+      }
+
+      var pdfBlob = pdf.output('blob');
+
+      // ── Trigger local download ──
+      var blobUrl = URL.createObjectURL(pdfBlob);
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIOS) {
+        window.open(blobUrl, '_blank');
+      } else {
+        var a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 5000);
+      }
+
+      // ── Encode PDF as base64 data URL ──
+      var pdfBase64 = await new Promise(function(resolve) {
+        var reader = new FileReader();
+        reader.onload = function() { resolve(reader.result); }; // "data:application/pdf;base64,..."
+        reader.readAsDataURL(pdfBlob);
+      });
+      record.pdf = pdfBase64;
+
+    } catch(err) {
+      console.error('PDF generation failed:', err);
+      // Still proceed to save even if PDF generation fails
+    }
+
+    // ── Save to Firestore AFTER PDF is ready so base64 is included ──
+    try {
+      await firebase.firestore().collection('submissions').add(record);
+    } catch(e) {
+      console.error('Firestore save failed:', e);
+    }
+  })();
 }
 
-// ── Generate & download meeting slip HTML ──
+// ── Generate & download meeting slip as PDF ──
 function downloadSlip() {
   var d = window._mtgData;
   if (!d) return;
 
-  // ── row() must be defined BEFORE it is used ──
   function slipRow(key, val) {
     return '<div class="sr"><span class="sk">' + key + '<\/span><span class="sv">' + (val || '\u2014') + '<\/span><\/div>';
   }
@@ -1205,7 +1350,6 @@ function downloadSlip() {
     return '<div class="ss"><div class="st">' + title + '<\/div>' + content + '<\/div>';
   }
 
-  // ── Build sections ──
   var secContact = slipRow('Full Name', d.fullName) +
                    slipRow('Email', d.email) +
                    (d.phone ? slipRow('Phone', d.phone) : '');
@@ -1225,9 +1369,8 @@ function downloadSlip() {
   var secInfo    = slipRow('Submitted', d.submittedAt) +
                    '<p style="font-size:11px;color:#aaa;margin-top:8px;">This is a meeting request slip. Your meeting is subject to confirmation by PCA staff via email.<\/p>';
 
-  // ── CSS (no quotes that clash with the outer JS string) ──
   var css = [
-    'body{font-family:Arial,sans-serif;margin:0;padding:16px;background:#f5f5f5;}',
+    'body{font-family:Arial,sans-serif;margin:0;padding:16px;background:#ffffff;}',
     '.slip{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12);}',
     '.slip-header{background:linear-gradient(135deg,#1a5c2e,#2d7a44);color:#fff;padding:24px 20px;text-align:center;}',
     '.slip-header img{width:72px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}',
@@ -1243,25 +1386,17 @@ function downloadSlip() {
     '.sr:last-of-type{border-bottom:none;}',
     '.sk{color:#888;flex-shrink:0;width:130px;}',
     '.sv{font-weight:600;color:#1a1a18;text-align:right;flex:1;}',
-    '.slip-footer{background:#1a5c2e;color:rgba(255,255,255,.7);text-align:center;padding:14px;font-size:11px;}',
-    '.print-btn{display:block;margin:20px auto;background:#1a5c2e;color:white;border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer;font-family:Arial,sans-serif;}',
-    '@media print{body{background:#fff;padding:0;}.slip{box-shadow:none;border-radius:0;}.print-btn{display:none;}}'
+    '.slip-footer{background:#1a5c2e;color:rgba(255,255,255,.7);text-align:center;padding:14px;font-size:11px;}'
   ].join('');
 
-  // ── Assemble full HTML ──
-  var parts = [
-    '<!DOCTYPE html>',
-    '<html lang="en">',
-    '<head>',
+  var slipHtml = [
+    '<!DOCTYPE html><html lang="en"><head>',
     '<meta charset="UTF-8">',
-    '<meta name="viewport" content="width=device-width,initial-scale=1">',
-    '<title>Meeting Slip ' + d.ref + '<\/title>',
     '<style>' + css + '<\/style>',
-    '<\/head>',
-    '<body>',
+    '<\/head><body>',
     '<div class="slip">',
       '<div class="slip-header">',
-        '<img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" alt="PCA">',
+        '<img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" crossorigin="anonymous" alt="PCA">',
         '<h1>Philippine Coconut Authority<\/h1>',
         '<p>Meeting Request Slip<\/p>',
       '<\/div>',
@@ -1275,36 +1410,71 @@ function downloadSlip() {
       slipSection('Submission Info', secInfo),
       '<div class="slip-footer">Philippine Coconut Authority | pca.gov.ph<\/div>',
     '<\/div>',
-    '<button class="print-btn" onclick="window.print()">Print This Slip<\/button>',
-    '<\/body>',
-    '<\/html>'
-  ];
-  var html = parts.join('');
+    '<\/body><\/html>'
+  ].join('');
 
-  // ── Download ──
   var now2 = new Date();
   var pad2 = function(n) { return String(n).padStart(2, '0'); };
   var datePart2 = now2.getFullYear() + pad2(now2.getMonth() + 1) + pad2(now2.getDate());
   var nameParts = (d.fullName || '').trim().split(' ');
   var lastName2  = nameParts[nameParts.length - 1] || 'Unknown';
   var firstName2 = nameParts[0] || 'Unknown';
-  var fileName = 'MTG_' + lastName2 + '_' + firstName2 + '_' + datePart2 + '.html';
+  var fileName = 'MTG_' + lastName2 + '_' + firstName2 + '_' + datePart2 + '.pdf';
 
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  var blob = new Blob([html], { type: 'text/html' });
-  var blobUrl = URL.createObjectURL(blob);
+  // Render into hidden iframe, capture with html2canvas, export as jsPDF
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:680px;height:900px;border:none;visibility:hidden;';
+  document.body.appendChild(iframe);
 
-  if (isIOS) {
-    window.open(blobUrl, '_blank');
-  } else {
-    var a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 5000);
-  }
+  iframe.onload = function() {
+    setTimeout(function() {
+      html2canvas(iframe.contentDocument.body, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#f5f5f5',
+        width: 680,
+        windowWidth: 680
+      }).then(function(canvas) {
+        document.body.removeChild(iframe);
+        var imgData = canvas.toDataURL('image/jpeg', 0.95);
+        var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+        var pageW = pdf.internal.pageSize.getWidth();
+        var pageH = pdf.internal.pageSize.getHeight();
+        var imgH  = (canvas.height / canvas.width) * pageW;
+
+        var posY = 0;
+        var remaining = imgH;
+        while (remaining > 0) {
+          pdf.addImage(imgData, 'JPEG', 0, -posY, pageW, imgH);
+          remaining -= pageH;
+          posY      += pageH;
+          if (remaining > 0) pdf.addPage();
+        }
+
+        var pdfBlob = pdf.output('blob');
+        var blobUrl = URL.createObjectURL(pdfBlob);
+        var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          window.open(blobUrl, '_blank');
+        } else {
+          var a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 5000);
+        }
+      }).catch(function(err) {
+        document.body.removeChild(iframe);
+        console.error('PDF generation failed:', err);
+        alert('PDF generation failed. Please try again.');
+      });
+    }, 800);
+  };
+
+  iframe.srcdoc = slipHtml;
 }
 
 function schedulAnother() {

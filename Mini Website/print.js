@@ -704,30 +704,7 @@ function printForm() {
   const randPart = Math.random().toString(36).substring(2,7).toUpperCase();
   const applicantId = `NCFRS-${datePart}-${randPart}`;
 
-  // ── Trigger download — iOS gets new tab, others auto-download ──
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const blob    = new Blob([html], { type: 'text/html' });
-  const blobUrl = URL.createObjectURL(blob);
-  const fileName = `NCFRS_${d.ln}_${d.fn}_${datePart}.html`;
-
-  if (isIOS) {
-    // iOS Safari: open in new tab (user can then share/save from there)
-    window.open(blobUrl, '_blank');
-    // Store the blobUrl so confirmation.html can show a tap-to-open button as fallback
-    sessionStorage.setItem('pca_blob_url', blobUrl);
-    sessionStorage.setItem('pca_file_name', fileName);
-  } else {
-    // All other browsers: trigger automatic download
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-  }
-
-  // ── Save to Firestore ──────────────────────────────────────
+  // ── Build record immediately (sessionStorage needed before redirect) ──
   const fullName = [d.fn, d.mn, d.ln, d.en].filter(Boolean).join(' ');
   const contact  = d.contact1 || d.contact2 || '';
   const record   = {
@@ -736,25 +713,106 @@ function printForm() {
     contact:      contact,
     createdAt:    now.toISOString(),
     form:         'NCFRS Form',
-    pdf:          `NCFRS_${d.ln}_${d.fn}_${datePart}.html`
+    pdf:          `NCFRS_${d.ln}_${d.fn}_${datePart}.pdf`
   };
 
-  // Store record in sessionStorage so confirmation.html can read it
+  // Store immediately so confirmation.html can read it even if PDF is slow
   sessionStorage.setItem('pca_submission', JSON.stringify(record));
 
-  // Save to Firestore via Firebase SDK (fire-and-forget — redirect happens regardless)
-  (async function saveToFirestore() {
+  const fileName = `NCFRS_${d.ln}_${d.fn}_${datePart}.pdf`;
+
+  // ── PDF generation, Firestore save, and redirect all in sequence ──
+  (async function generateSaveAndRedirect() {
+    try {
+      // Render the form HTML into a hidden iframe
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:794px;height:1123px;border:none;visibility:hidden;';
+      document.body.appendChild(iframe);
+
+      await new Promise(resolve => {
+        iframe.onload = resolve;
+        iframe.srcdoc = html;
+      });
+
+      // Give fonts/images time to load inside the iframe
+      await new Promise(r => setTimeout(r, 1000));
+
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      const canvas = await html2canvas(iframeDoc.body, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        windowWidth: 794
+      });
+      document.body.removeChild(iframe);
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+      const pageW  = pdf.internal.pageSize.getWidth();
+      const pageH  = pdf.internal.pageSize.getHeight();
+
+      // 28pt (~10mm) margins on all sides
+      const margin  = 28;
+      const printW  = pageW - margin * 2;
+      const printH  = pageH - margin * 2;
+
+      // Scale canvas to fit the printable width
+      const imgH = (canvas.height / canvas.width) * printW;
+
+      // Add pages only when there is meaningful content remaining (>5pt threshold)
+      let posY = 0;
+      while (posY < imgH - 5) {
+        pdf.addImage(imgData, 'JPEG', margin, margin - posY, printW, imgH);
+        posY += printH;
+        if (posY < imgH - 5) pdf.addPage();
+      }
+
+      const pdfBlob = pdf.output('blob');
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      // ── Trigger local download ────────────────────────────
+      if (isIOS) {
+        window.open(blobUrl, '_blank');
+        sessionStorage.setItem('pca_blob_url', blobUrl);
+        sessionStorage.setItem('pca_file_name', fileName);
+      } else {
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      }
+
+      // ── Encode PDF as base64 data URL so admin can open it directly ──
+      const pdfBase64 = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result); // "data:application/pdf;base64,..."
+        reader.readAsDataURL(pdfBlob);
+      });
+      record.pdf = pdfBase64;
+      sessionStorage.setItem('pca_submission', JSON.stringify(record));
+
+    } catch(err) {
+      console.error('PDF generation failed:', err);
+      // Still proceed to save + redirect even if PDF fails
+    }
+
+    // ── Save to Firestore AFTER upload so URL is included ────
     try {
       await firebase.firestore().collection('submissions').add(record);
     } catch(e) {
       console.error('Firestore save failed:', e);
     }
-  })();
 
-  // ── Redirect to confirmation page ─────────────────────────
-  setTimeout(() => {
+    // ── Redirect to confirmation ──────────────────────────────
     window.location.href = 'confirmation.html';
-  }, 800);
+  })();
 }
 
 // ── Wire up buttons after DOM is ready ────────────────────

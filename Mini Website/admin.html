@@ -291,6 +291,95 @@
   }
   .filter-apply:hover { background: #0a5a04; }
 
+  /* ── STATUS BADGES ── */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .status-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-active    { background: #e8f5e9; color: #1b5e20; }
+  .status-active::before    { background: #43a047; box-shadow: 0 0 0 2px #a5d6a7; animation: pulse 2s infinite; }
+  .status-completed { background: #e3f2fd; color: #0d47a1; }
+  .status-completed::before { background: #1e88e5; }
+  .status-cancelled { background: #fce4ec; color: #880e4f; }
+  .status-cancelled::before { background: #e53935; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 2px #a5d6a7; }
+    50%       { box-shadow: 0 0 0 4px #c8e6c9; }
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .complete-btn { background: #1e88e5; color: white; }
+  .cancel-btn   { background: #ff7043; color: white; }
+  .restore-btn  { background: #757575; color: white; }
+
+  /* ── BULK TOOLBAR ── */
+  .bulk-toolbar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #fff8e1;
+    border: 1.5px solid #ffe082;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .bulk-toolbar.visible { display: flex; }
+  .bulk-toolbar-count { font-size: 13px; font-weight: 700; color: #555; flex: 1; }
+  .bulk-delete-btn {
+    padding: 7px 16px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .bulk-delete-btn:hover { opacity: 0.85; }
+  .bulk-cancel-sel-btn {
+    padding: 7px 14px;
+    background: white;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #555;
+  }
+  .bulk-cancel-sel-btn:hover { background: #f5f5f5; }
+
+  /* ── CHECKBOXES ── */
+  .row-check, .select-all-check {
+    width: 16px; height: 16px;
+    accent-color: #0d6d05;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .card-check-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .card-check-wrap label { font-size: 12px; color: #888; font-weight: 600; cursor: pointer; }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 640px) {
     nav { top: 44px; }
@@ -320,13 +409,22 @@
     <button class="sub-tab" onclick="setSubTab('meeting')">Meetings</button>
     <button class="sub-tab" onclick="setSubTab('enrollment')">Enrollments</button>
   </div>
+
+  <!-- Bulk Toolbar -->
+  <div class="bulk-toolbar" id="bulkToolbar">
+    <span class="bulk-toolbar-count" id="bulkCount">0 selected</span>
+    <button class="bulk-cancel-sel-btn" onclick="clearSelection()">✕ Deselect All</button>
+    <button class="bulk-delete-btn" onclick="bulkDelete()">🗑 Delete Selected</button>
+  </div>
+
   <input class="search-bar" type="text" placeholder="Search Submissions..." oninput="filterCards('submissionsCards', this.value); filterTableRows('submissionsTable', this.value)">
   <div class="table-wrap">
     <table id="submissionsTable">
       <thead>
         <tr>
+          <th style="width:36px"><input type="checkbox" class="select-all-check" id="selectAllCheck" onchange="toggleSelectAll(this)"></th>
           <th>Applicant ID</th><th>Full Name</th><th>Form</th>
-          <th>Contact</th><th>PDF</th><th>Date</th><th>Actions</th>
+          <th>Contact</th><th>PDF</th><th>Status</th><th>Date</th><th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
