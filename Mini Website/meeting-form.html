@@ -1,0 +1,1336 @@
+<!-- PCA Meeting Form v2 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quick Meeting Scheduler — PCA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --green: #1a5c2e;
+    --green-mid: #2d7a44;
+    --green-light: #e8f3ec;
+    --gold: #c5920a;
+    --gold-pale: #fdf6e3;
+    --ink: #1a1a18;
+    --muted: #6b6b5e;
+    --border: #c8c8b8;
+    --surface: #fafaf7;
+    --white: #ffffff;
+    --red: #c0392b;
+    --input-h: 50px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 90px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--green);
+    color: #fff;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.3);
+  }
+  .site-header-back {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px; cursor: pointer; flex-shrink: 0;
+    text-decoration: none;
+  }
+  .site-header-back:hover { background: rgba(255,255,255,0.25); }
+  .site-header-text { flex: 1; min-width: 0; }
+  .site-header-text h1 { font-size: 16px; font-weight: 700; line-height: 1.2; }
+  .site-header-text p { font-size: 11px; opacity: 0.72; margin-top: 2px; }
+
+  /* ── HERO BAND ── */
+  .form-hero {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+    padding: 20px 16px 18px;
+    color: white;
+  }
+  .form-hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .form-hero h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400;
+    line-height: 1.25; margin-bottom: 6px;
+  }
+  .form-hero p { font-size: 12px; opacity: 0.82; line-height: 1.6; }
+
+  /* ── PROGRESS TABS ── */
+  .progress-wrap {
+    background: var(--green);
+    padding: 0 16px 14px;
+    overflow-x: auto;
+    -ms-overflow-style: none; scrollbar-width: none;
+  }
+  .progress-wrap::-webkit-scrollbar { display: none; }
+  .progress-tabs {
+    display: flex; gap: 6px;
+    list-style: none; white-space: nowrap;
+    min-width: max-content;
+  }
+  .progress-tabs li {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.1);
+    cursor: default; user-select: none;
+    transition: all 0.2s;
+  }
+  .progress-tabs li.active {
+    color: var(--green);
+    background: white;
+  }
+  .progress-tabs li.done {
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ── MAIN WRAP ── */
+  .main-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── FORM CARD ── */
+  .form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    display: none;
+  }
+  .form-card.active { display: block; }
+
+  .card-header {
+    background: linear-gradient(90deg, var(--green-light) 0%, #f0f5f1 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header-icon {
+    width: 36px; height: 36px;
+    background: var(--green);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px; flex-shrink: 0;
+  }
+  .card-header-text h3 {
+    font-size: 14px; font-weight: 700; color: var(--green);
+  }
+  .card-header-text p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .card-body { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── FIELDS ── */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px; font-weight: 600; color: var(--ink);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .field label .req { color: var(--red); font-size: 12px; }
+
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    height: var(--input-h);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0 14px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px; color: var(--ink);
+    transition: border-color 0.18s, box-shadow 0.18s;
+    -webkit-appearance: none; appearance: none;
+    outline: none;
+  }
+  .field textarea {
+    height: auto; min-height: 90px;
+    padding: 12px 14px; resize: vertical; line-height: 1.5;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(26,92,46,0.12);
+    background: white;
+  }
+  .field input.error, .field textarea.error, .field select.error {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+  }
+  .field .sublabel {
+    font-size: 11px; color: var(--muted); margin-top: -2px;
+  }
+  .field .err-msg {
+    font-size: 11px; color: var(--red); font-weight: 600;
+    display: none;
+  }
+  .field .err-msg.show { display: block; }
+
+  /* name grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── CALENDAR ── */
+  .calendar-wrap { display: flex; flex-direction: column; gap: 12px; }
+
+  .cal-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px;
+  }
+  .cal-nav span {
+    font-size: 14px; font-weight: 700; color: var(--green);
+    font-family: 'DM Serif Display', serif;
+  }
+  .cal-nav button {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px; background: white;
+    cursor: pointer; font-size: 14px; color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .cal-nav button:hover { background: var(--green-light); border-color: var(--green); color: var(--green); }
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    text-align: center; color: var(--muted); padding: 4px 0;
+    text-transform: uppercase;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cal-day.empty { pointer-events: none; }
+  .cal-day.unavailable { color: #ccc; cursor: not-allowed; }
+  .cal-day.today { border-color: var(--green); color: var(--green); font-weight: 700; }
+  .cal-day.selected { background: var(--green); color: white; border-color: var(--green); }
+  .cal-day:not(.unavailable):not(.empty):not(.selected):hover {
+    background: var(--green-light);
+    border-color: var(--green-mid);
+  }
+
+  .time-slots-label {
+    font-size: 12px; font-weight: 700; color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .time-slots {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .time-slot {
+    padding: 10px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px; text-align: center;
+    cursor: pointer; background: white;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .time-slot.selected {
+    background: var(--green); color: white; border-color: var(--green);
+    font-weight: 600;
+  }
+  .time-slot:not(.selected):hover {
+    background: var(--green-light); border-color: var(--green-mid);
+  }
+  .selected-datetime {
+    background: var(--green-light);
+    border: 1px solid #b8d9c2;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px; color: var(--green);
+    font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    min-height: 42px;
+  }
+  .selected-datetime i { font-size: 14px; }
+
+  /* ── RADIO GROUP ── */
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .radio-item.selected {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+  .radio-item input[type="radio"] { display: none; }
+  .radio-dot {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .radio-item.selected .radio-dot {
+    border-color: var(--green); background: var(--green);
+  }
+  .radio-item.selected .radio-dot::after {
+    content: ''; width: 6px; height: 6px;
+    background: white; border-radius: 50%;
+  }
+  .radio-label { font-size: 14px; font-weight: 500; }
+  .radio-label small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
+
+  /* ── REVIEW SECTION ── */
+  .review-section { margin-bottom: 14px; }
+  .review-section-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gold);
+    background: var(--gold-pale); border: 1px solid #e8d5a0;
+    border-radius: 6px; padding: 3px 9px;
+    display: inline-block; margin-bottom: 10px;
+  }
+  .review-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    gap: 12px;
+  }
+  .review-row:last-child { border-bottom: none; }
+  .review-key { font-size: 12px; color: var(--muted); flex-shrink: 0; width: 140px; }
+  .review-val { font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; flex: 1; line-height: 1.4; }
+  .review-val.accent { color: var(--green); }
+
+  /* ── TERMS ── */
+  .terms-box {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 12px; color: var(--muted); line-height: 1.6;
+    max-height: 120px; overflow-y: auto;
+  }
+  .terms-accept {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer; background: white;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .terms-accept.checked {
+    border-color: var(--green); background: var(--green-light);
+  }
+  .terms-accept input[type="checkbox"] { display: none; }
+  .check-box {
+    width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px;
+    border: 2px solid var(--border); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .terms-accept.checked .check-box {
+    background: var(--green); border-color: var(--green); color: white;
+  }
+  .terms-accept.checked .check-box::after {
+    content: '✓'; font-size: 12px; font-weight: 700; color: white;
+  }
+  .terms-text { font-size: 12px; color: var(--ink); line-height: 1.5; }
+
+  /* ── BOTTOM NAV ── */
+  .nav-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    z-index: 50;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  }
+  .step-indicator {
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+  .btn {
+    padding: 12px 20px; border-radius: 10px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; border: none;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.18s; white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-outline {
+    background: white; color: var(--green);
+    border: 1.5px solid var(--green);
+  }
+  .btn-outline:active { background: var(--green-light); }
+  .btn-primary {
+    background: var(--green); color: white;
+    box-shadow: 0 3px 12px rgba(26,92,46,0.3);
+  }
+  .btn-primary:active { background: var(--green-mid); transform: scale(0.97); }
+
+  /* ── CONFIRMATION SCREEN ── */
+  #confirmation-screen { display: none; }
+  #confirmation-screen.show { display: block; }
+  .form-card.active ~ #confirmation-screen { display: none; }
+
+  .conf-hero {
+    background: linear-gradient(135deg, #4cca2a 0%, #2db80f 50%, #1a7a10 100%);
+    padding: 28px 20px 24px;
+    text-align: center; color: white;
+  }
+  .check-circle {
+    width: 72px; height: 72px;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.6);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+  }
+  .check-circle i { color: white; font-size: 30px; }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .conf-hero h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 6px; }
+  .conf-hero p { font-size: 13px; opacity: 0.85; line-height: 1.6; }
+
+  .conf-ref {
+    margin: 16px 16px 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .conf-ref-header {
+    background: var(--green-light);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .conf-ref-header i { color: var(--green); font-size: 14px; }
+  .conf-ref-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); }
+  .conf-ref-id {
+    text-align: center; padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .conf-ref-id p { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .conf-ref-id .ref-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px; font-weight: 500; color: var(--green);
+    letter-spacing: 0.1em;
+  }
+
+  .conf-details { padding: 14px 16px; display: flex; flex-direction: column; gap: 0; }
+  .conf-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0f0e8;
+    gap: 12px;
+  }
+  .conf-row:last-child { border-bottom: none; }
+  .conf-key { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .conf-val { font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; flex: 1; line-height: 1.4; }
+
+  .conf-actions {
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .conf-btn {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .conf-btn-primary {
+    background: var(--green); color: white;
+    box-shadow: 0 3px 12px rgba(26,92,46,0.25);
+  }
+  .conf-btn-outline {
+    background: white; color: var(--green);
+    border: 1.5px solid var(--green);
+  }
+  .conf-btn:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <a href="forms.html" class="site-header-back"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="site-header-text">
+    <h1>Quick Meeting Scheduler</h1>
+    <p>PCA — Schedule a Meeting</p>
+  </div>
+</header>
+
+<!-- HERO BAND -->
+<div class="form-hero">
+  <div class="form-hero-badge"><i class="fa-solid fa-calendar-check"></i> PCA-MTG-01</div>
+  <h2>Schedule a Meeting</h2>
+  <p>Provide your details and meeting preferences. All required fields are marked with <span style="color:#ffeb99;">*</span></p>
+</div>
+
+<!-- PROGRESS TABS -->
+<div class="progress-wrap">
+  <ul class="progress-tabs" id="progress-tabs">
+    <li class="active">1. Contact Info</li>
+    <li>2. Meeting Details</li>
+    <li>3. Notes</li>
+    <li>4. Review &amp; Submit</li>
+  </ul>
+</div>
+
+<!-- MAIN WRAP -->
+<div class="main-wrap" id="main-wrap">
+
+  <!-- ── SECTION 0: Contact Info ── -->
+  <div class="form-card active" id="section-0">
+    <div class="card-header">
+      <div class="card-header-icon"><i class="fa-solid fa-user"></i></div>
+      <div class="card-header-text">
+        <h3>Contact Information</h3>
+        <p>Who are we scheduling this meeting with?</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div class="field">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" id="first_name" placeholder="Juan">
+          <span class="err-msg" id="err_first_name">Required</span>
+        </div>
+        <div class="field">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" id="last_name" placeholder="Dela Cruz">
+          <span class="err-msg" id="err_last_name">Required</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="juan@example.com">
+        <span class="err-msg" id="err_email">Enter a valid email</span>
+      </div>
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="(000) 000-0000">
+        <span class="sublabel">Optional — for SMS reminders</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: Meeting Details ── -->
+  <div class="form-card" id="section-1">
+    <div class="card-header">
+      <div class="card-header-icon"><i class="fa-solid fa-calendar-days"></i></div>
+      <div class="card-header-text">
+        <h3>Meeting Details</h3>
+        <p>Choose your preferred date, time, and format</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- Date Picker -->
+      <div class="field">
+        <label>Preferred Date <span class="req">*</span></label>
+        <div class="calendar-wrap">
+          <div class="cal-nav">
+            <button id="cal-prev" type="button"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="cal-month-label">May 2026</span>
+            <button id="cal-next" type="button"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <span class="err-msg" id="err_date">Please select a date</span>
+      </div>
+
+      <!-- Time Slots -->
+      <div class="field" id="time-field" style="display:none;">
+        <label>Available Time Slots <span class="req">*</span></label>
+        <div class="time-slots" id="time-slots"></div>
+        <span class="err-msg" id="err_time">Please select a time slot</span>
+      </div>
+
+      <div class="selected-datetime" id="selected-dt-display">
+        <i class="fa-regular fa-clock"></i>
+        <span>No date &amp; time selected yet</span>
+      </div>
+
+      <!-- Duration -->
+      <div class="field">
+        <label>Meeting Duration <span class="req">*</span></label>
+        <select id="duration">
+          <option value="">— Select Duration —</option>
+          <option value="15 minutes">15 minutes</option>
+          <option value="30 minutes">30 minutes</option>
+          <option value="45 minutes">45 minutes</option>
+          <option value="60 minutes">60 minutes</option>
+        </select>
+        <span class="err-msg" id="err_duration">Please select a duration</span>
+      </div>
+
+      <!-- Meeting Type -->
+      <div class="field">
+        <label>Meeting Type <span class="req">*</span></label>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this, 'mtg_type', 'In-person')">
+            <input type="radio" name="mtg_type" value="In-person">
+            <div class="radio-dot"></div>
+            <div class="radio-label">In-person
+              <small>Visit us at the nearest PCA office</small>
+            </div>
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'mtg_type', 'Virtual (Video Call)')">
+            <input type="radio" name="mtg_type" value="Virtual (Video Call)">
+            <div class="radio-dot"></div>
+            <div class="radio-label">Virtual (Video Call)
+              <small>Join via your preferred platform</small>
+            </div>
+          </label>
+        </div>
+        <span class="err-msg" id="err_mtg_type">Please select a meeting type</span>
+      </div>
+
+      <!-- Platform (shown when virtual) -->
+      <div class="field" id="platform-field" style="display:none;">
+        <label>Preferred Platform</label>
+        <select id="platform">
+          <option value="">— Select Platform —</option>
+          <option value="Zoom">Zoom</option>
+          <option value="Google Meet">Google Meet</option>
+          <option value="Microsoft Teams">Microsoft Teams</option>
+          <option value="Skype">Skype</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Location (shown when in-person) -->
+      <div class="field" id="location-field" style="display:none;">
+        <label>PCA Region <span class="req">*</span></label>
+        <select id="location_region" onchange="onRegionChange()">
+          <option value="">— Select Region —</option>
+          <option value="ncr">NCR — National Capital Region</option>
+          <option value="car">CAR — Cordillera Administrative Region</option>
+          <option value="region1">Region I — Ilocos Region</option>
+          <option value="region2">Region II — Cagayan Valley</option>
+          <option value="region3">Region III — Central Luzon</option>
+          <option value="region4a">Region IV-A — CALABARZON</option>
+          <option value="region4b">Region IV-B — MIMAROPA</option>
+          <option value="region5">Region V — Bicol Region</option>
+          <option value="region6">Region VI — Western Visayas</option>
+          <option value="region7">Region VII — Central Visayas</option>
+          <option value="region8">Region VIII — Eastern Visayas</option>
+          <option value="region9">Region IX — Zamboanga Peninsula</option>
+          <option value="region10">Region X — Northern Mindanao</option>
+          <option value="region11">Region XI — Davao Region</option>
+          <option value="region12">Region XII — SOCCSKSARGEN</option>
+          <option value="region13">Region XIII — Caraga</option>
+          <option value="barmm">BARMM — Bangsamoro</option>
+        </select>
+        <span class="err-msg" id="err_location_region">Please select a region</span>
+      </div>
+      <div class="field" id="location-office-field" style="display:none;">
+        <label>PCA Office <span class="req">*</span></label>
+        <select id="location_office">
+          <option value="">— Select Office —</option>
+        </select>
+        <span class="err-msg" id="err_location_office">Please select an office</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: Notes ── -->
+  <div class="form-card" id="section-2">
+    <div class="card-header">
+      <div class="card-header-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+      <div class="card-header-text">
+        <h3>Notes &amp; Additional Info</h3>
+        <p>Tell us more about the meeting</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label>Meeting Purpose / Agenda <span class="req">*</span></label>
+        <textarea id="purpose" placeholder="Briefly describe the purpose of the meeting and topics to discuss…"></textarea>
+        <span class="err-msg" id="err_purpose">Please describe the meeting purpose</span>
+      </div>
+      <div class="field">
+        <label>Participants to Invite</label>
+        <textarea id="participants" placeholder="List names or emails of other participants (optional)…"></textarea>
+        <span class="sublabel">Optional</span>
+      </div>
+      <div class="field">
+        <label>Special Requests or Notes</label>
+        <textarea id="special" placeholder="Any special accommodations, requirements, or notes…"></textarea>
+        <span class="sublabel">Optional</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: Review & Submit ── -->
+  <div class="form-card" id="section-3">
+    <div class="card-header">
+      <div class="card-header-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+      <div class="card-header-text">
+        <h3>Review &amp; Submit</h3>
+        <p>Confirm your details before scheduling</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- Review Summary -->
+      <div id="review-content"></div>
+
+      <!-- Terms -->
+      <div class="field">
+        <div class="terms-box">
+          I agree to attend the scheduled meeting and understand that my information will be used solely for meeting coordination purposes. By submitting this form, I consent to be contacted by PCA staff regarding this meeting request. I understand that confirmation of the meeting is subject to staff availability and will be communicated via the email address provided.
+        </div>
+      </div>
+      <div class="terms-accept" id="terms-label" onclick="toggleTerms()">
+        <div class="check-box" id="check-box-ui"></div>
+        <span class="terms-text">I agree to the terms and conditions stated above. <span style="color:var(--red);">*</span></span>
+      </div>
+      <span class="err-msg" id="err_terms">You must accept the terms to proceed</span>
+    </div>
+  </div>
+
+</div><!-- end main-wrap -->
+
+<!-- ── CONFIRMATION SCREEN ── -->
+<div id="confirmation-screen">
+  <div class="conf-hero">
+    <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+    <h2>Meeting Scheduled!</h2>
+    <p>Your meeting request has been submitted successfully. You'll receive a confirmation email shortly.</p>
+  </div>
+
+  <div class="conf-ref">
+    <div class="conf-ref-header">
+      <i class="fa-solid fa-receipt"></i>
+      <span>Meeting Request Confirmation</span>
+    </div>
+    <div class="conf-ref-id">
+      <p>Reference Number</p>
+      <div class="ref-code" id="conf-ref-code">MTG-XXXXXX</div>
+    </div>
+    <div class="conf-details" id="conf-details"></div>
+  </div>
+
+  <div style="margin: 16px;">
+    <div class="conf-actions" style="padding:0; gap:10px; display:flex; flex-direction:column;">
+      <button class="conf-btn conf-btn-outline" id="btn-download-slip" onclick="downloadSlip()">
+        <i class="fa-solid fa-download"></i> Download Meeting Slip
+      </button>
+      <button class="conf-btn conf-btn-outline" onclick="schedulAnother()">
+        <i class="fa-solid fa-plus"></i> Schedule Another Meeting
+      </button>
+      <a href="forms.html" class="conf-btn conf-btn-primary" style="text-decoration:none;">
+        <i class="fa-solid fa-house"></i> Back to Forms
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAV BAR ── -->
+<div class="nav-bar" id="nav-bar">
+  <button class="btn btn-outline" id="btn-prev" style="display:none;">← Prev</button>
+  <span class="step-indicator" id="step-label">Step 1 of 4</span>
+  <button class="btn btn-primary" id="btn-next">Next →</button>
+</div>
+
+<!-- Firebase compat SDK (same version as field.html) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "SECRET",
+    authDomain: "pca-website-d2552.firebaseapp.com",
+    projectId: "pca-website-d2552",
+    storageBucket: "pca-website-d2552.firebasestorage.app",
+    messagingSenderId: "444810419373",
+    appId: "1:444810419373:web:a5820613bd89fa7079fa24"
+  });
+</script>
+
+<script>
+// ── Office Data ──
+var officeData = {
+  ncr:      ["Office of the Administrator","Administrative and Finance Department","Human Resource Management Division","Legal Affairs Service","Research and Development Branch","Market Development Department","Coconut Extension Training Center","Technical Services Division"],
+  car:      ["PCA CAR Regional Office"],
+  region1:  ["PCA Region I Regional Office","Pangasinan Provincial Office","La Union Provincial Office","Ilocos Sur Provincial Office","Ilocos Norte Provincial Office"],
+  region2:  ["PCA Region II Regional Office","Cagayan Provincial Office","Isabela Provincial Office","Nueva Vizcaya Provincial Office","Quirino Provincial Office"],
+  region3:  ["PCA Region III Regional Office","Bataan Provincial Office","Zambales Provincial Office","Aurora Provincial Office"],
+  region4a: ["PCA Region IV-A Regional Office","Quezon Provincial Office","Laguna Provincial Office","Batangas Provincial Office","Cavite Provincial Office","Rizal Provincial Office"],
+  region4b: ["PCA Region IV-B Regional Office","Mindoro Provincial Office","Marinduque Provincial Office","Romblon Provincial Office","Palawan Provincial Office"],
+  region5:  ["PCA Region V Regional Office","Albay Provincial Office","Camarines Norte Provincial Office","Camarines Sur Provincial Office","Sorsogon Provincial Office","Masbate Provincial Office","Catanduanes Provincial Office"],
+  region6:  ["PCA Region VI Regional Office","Iloilo Provincial Office","Negros Occidental Provincial Office","Aklan Provincial Office","Capiz Provincial Office","Antique Provincial Office","Guimaras Provincial Office"],
+  region7:  ["PCA Region VII Regional Office","Cebu Provincial Office","Bohol Provincial Office","Negros Oriental Provincial Office","Siquijor Provincial Office"],
+  region8:  ["PCA Region VIII Regional Office","Leyte Provincial Office","Southern Leyte Provincial Office","Samar Provincial Office","Eastern Samar Provincial Office","Northern Samar Provincial Office","Biliran Provincial Office"],
+  region9:  ["PCA Region IX Regional Office","Zamboanga del Norte Provincial Office","Zamboanga del Sur Provincial Office","Zamboanga Sibugay Provincial Office"],
+  region10: ["PCA Region X Regional Office","Misamis Oriental Provincial Office","Bukidnon Provincial Office","Camiguin Provincial Office","Lanao del Norte Provincial Office"],
+  region11: ["PCA Region XI Regional Office","Davao del Sur Provincial Office","Davao del Norte Provincial Office","Davao Oriental Provincial Office","Davao de Oro Provincial Office"],
+  region12: ["PCA Region XII Regional Office","South Cotabato Provincial Office","Sultan Kudarat Provincial Office","Sarangani Provincial Office"],
+  region13: ["PCA Caraga Regional Office","Agusan del Norte Provincial Office","Agusan del Sur Provincial Office","Surigao del Norte Provincial Office","Surigao del Sur Provincial Office"],
+  barmm:    ["PCA BARMM Regional Office","Maguindanao Provincial Office","Basilan Provincial Office","Sulu Provincial Office","Tawi-Tawi Provincial Office"]
+};
+
+function onRegionChange() {
+  var regionKey = document.getElementById('location_region').value;
+  var officeField = document.getElementById('location-office-field');
+  var officeSelect = document.getElementById('location_office');
+  officeSelect.innerHTML = '<option value="">— Select Office —<\/option>';
+  if (regionKey && officeData[regionKey]) {
+    officeData[regionKey].forEach(function(o) {
+      var opt = document.createElement('option');
+      opt.value = o; opt.textContent = o;
+      officeSelect.appendChild(opt);
+    });
+    officeField.style.display = 'block';
+  } else {
+    officeField.style.display = 'none';
+  }
+  // clear error
+  document.getElementById('err_location_region').classList.remove('show');
+  document.getElementById('location_region').classList.remove('error');
+}
+
+// ── Calendar State ──
+var calYear = 2026, calMonth = 4; // 0-indexed, so 4 = May
+var selectedDate = null, selectedTime = null;
+var termsAccepted = false;
+var selectedMtgType = '';
+var currentSection = 0;
+var totalSections = 4;
+
+var timeSlots = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+
+function renderCalendar() {
+  var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent = monthNames[calMonth] + ' ' + calYear;
+
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  var dows = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  dows.forEach(function(d) {
+    var el = document.createElement('div');
+    el.className = 'cal-dow'; el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var firstDay = new Date(calYear, calMonth, 1).getDay();
+  var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  for (var i = 0; i < firstDay; i++) {
+    var empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for (var d = 1; d <= daysInMonth; d++) {
+    var date = new Date(calYear, calMonth, d);
+    var day = document.createElement('div');
+    day.className = 'cal-day';
+    day.textContent = d;
+
+    var dow = date.getDay();
+    var isPast = date < today;
+    var isWeekend = (dow === 0 || dow === 6);
+
+    if (isPast || isWeekend) {
+      day.classList.add('unavailable');
+    } else {
+      var dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      if (date.toDateString() === today.toDateString()) day.classList.add('today');
+      if (selectedDate === dateStr) day.classList.add('selected');
+      day.setAttribute('data-date', dateStr);
+      day.addEventListener('click', function() { selectDate(this.getAttribute('data-date')); });
+    }
+    grid.appendChild(day);
+  }
+}
+
+function selectDate(dateStr) {
+  selectedDate = dateStr;
+  selectedTime = null;
+  renderCalendar();
+  renderTimeSlots();
+  document.getElementById('time-field').style.display = 'block';
+  updateDtDisplay();
+}
+
+function renderTimeSlots() {
+  var container = document.getElementById('time-slots');
+  container.innerHTML = '';
+  timeSlots.forEach(function(t) {
+    var el = document.createElement('div');
+    el.className = 'time-slot' + (selectedTime === t ? ' selected' : '');
+    el.textContent = t;
+    el.addEventListener('click', function() { selectTime(t); });
+    container.appendChild(el);
+  });
+}
+
+function selectTime(t) {
+  selectedTime = t;
+  renderTimeSlots();
+  updateDtDisplay();
+}
+
+function updateDtDisplay() {
+  var el = document.getElementById('selected-dt-display');
+  if (selectedDate && selectedTime) {
+    var d = new Date(selectedDate + 'T00:00:00');
+    var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    el.innerHTML = '<i class="fa-solid fa-calendar-check"><\/i><span>' + d.toLocaleDateString('en-US', opts) + ' at ' + selectedTime + '<\/span>';
+  } else if (selectedDate) {
+    var d2 = new Date(selectedDate + 'T00:00:00');
+    el.innerHTML = '<i class="fa-regular fa-calendar"><\/i><span>' + d2.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }) + ' — select a time slot<\/span>';
+  } else {
+    el.innerHTML = '<i class="fa-regular fa-clock"><\/i><span>No date & time selected yet<\/span>';
+  }
+}
+
+document.getElementById('cal-prev').addEventListener('click', function() {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+});
+document.getElementById('cal-next').addEventListener('click', function() {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+});
+
+renderCalendar();
+
+// ── Radio Buttons ──
+function selectRadio(label, name, value) {
+  document.querySelectorAll('[name="' + name + '"]').forEach(function(r) {
+    r.closest('.radio-item').classList.remove('selected');
+  });
+  label.classList.add('selected');
+  label.querySelector('input').checked = true;
+  if (name === 'mtg_type') {
+    selectedMtgType = value;
+    document.getElementById('platform-field').style.display = value === 'Virtual (Video Call)' ? 'block' : 'none';
+    document.getElementById('location-field').style.display = value === 'In-person' ? 'block' : 'none';
+    if (value !== 'In-person') {
+      document.getElementById('location-office-field').style.display = 'none';
+      document.getElementById('location_region').value = '';
+      document.getElementById('location_office').innerHTML = '<option value="">— Select Office —<\/option>';
+    }
+  }
+}
+
+// ── Terms ──
+function toggleTerms() {
+  termsAccepted = !termsAccepted;
+  document.getElementById('terms-label').classList.toggle('checked', termsAccepted);
+  if (termsAccepted) document.getElementById('err_terms').classList.remove('show');
+}
+
+// ── Validation ──
+function validateSection(n) {
+  var ok = true;
+  function showErr(id, msg) {
+    var el = document.getElementById(id);
+    el.textContent = msg; el.classList.add('show');
+    var input = document.getElementById(id.replace('err_',''));
+    if (input) input.classList.add('error');
+    ok = false;
+  }
+  function clearErr(id) {
+    var el = document.getElementById(id);
+    el.classList.remove('show');
+    var input = document.getElementById(id.replace('err_',''));
+    if (input) input.classList.remove('error');
+  }
+
+  if (n === 0) {
+    var fn = document.getElementById('first_name').value.trim();
+    var ln = document.getElementById('last_name').value.trim();
+    var em = document.getElementById('email').value.trim();
+    fn ? clearErr('err_first_name') : showErr('err_first_name', 'First name is required');
+    ln ? clearErr('err_last_name') : showErr('err_last_name', 'Last name is required');
+    var emailOk = em && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em);
+    emailOk ? clearErr('err_email') : showErr('err_email', em ? 'Enter a valid email address' : 'Email is required');
+  }
+  if (n === 1) {
+    selectedDate ? clearErr('err_date') : showErr('err_date', 'Please select a date');
+    selectedTime ? clearErr('err_time') : showErr('err_time', 'Please select a time slot');
+    var dur = document.getElementById('duration').value;
+    dur ? clearErr('err_duration') : showErr('err_duration', 'Please select a duration');
+    selectedMtgType ? clearErr('err_mtg_type') : showErr('err_mtg_type', 'Please select a meeting type');
+    if (selectedMtgType === 'In-person') {
+      var reg = document.getElementById('location_region').value;
+      var off = document.getElementById('location_office').value;
+      reg ? clearErr('err_location_region') : showErr('err_location_region', 'Please select a region');
+      off ? clearErr('err_location_office') : showErr('err_location_office', 'Please select an office');
+    }
+  }
+  if (n === 2) {
+    var pur = document.getElementById('purpose').value.trim();
+    pur ? clearErr('err_purpose') : showErr('err_purpose', 'Please describe the meeting purpose');
+  }
+  if (n === 3) {
+    if (!termsAccepted) { document.getElementById('err_terms').classList.add('show'); ok = false; }
+    else document.getElementById('err_terms').classList.remove('show');
+  }
+  return ok;
+}
+
+// ── Navigation ──
+function goTo(n) {
+  document.getElementById('section-' + currentSection).classList.remove('active');
+  currentSection = n;
+  document.getElementById('section-' + currentSection).classList.add('active');
+
+  var tabs = document.querySelectorAll('#progress-tabs li');
+  tabs.forEach(function(t, i) {
+    t.classList.remove('active','done');
+    if (i < n) t.classList.add('done');
+    else if (i === n) t.classList.add('active');
+  });
+
+  document.getElementById('step-label').textContent = 'Step ' + (n+1) + ' of ' + totalSections;
+  document.getElementById('btn-prev').style.display = n > 0 ? 'flex' : 'none';
+  document.getElementById('btn-next').textContent = n === totalSections - 1 ? 'Submit ✓' : 'Next →';
+
+  if (n === totalSections - 1) buildReview();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildReview() {
+  var d = selectedDate ? new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) : '—';
+  var html = '';
+  html += '<div class="review-section">';
+  html += '<div class="review-section-title">Contact Info<\/div>';
+  html += row('Name', document.getElementById('first_name').value + ' ' + document.getElementById('last_name').value);
+  html += row('Email', document.getElementById('email').value);
+  html += row('Phone', document.getElementById('phone').value || '—');
+  html += '<\/div>';
+
+  html += '<div class="review-section">';
+  html += '<div class="review-section-title">Meeting Details<\/div>';
+  html += row('Date', d, true);
+  html += row('Time', selectedTime || '—', true);
+  html += row('Duration', document.getElementById('duration').value || '—');
+  html += row('Type', selectedMtgType || '—');
+  if (selectedMtgType === 'Virtual (Video Call)') html += row('Platform', document.getElementById('platform').value || 'Not specified');
+  if (selectedMtgType === 'In-person') {
+    var regSel = document.getElementById('location_region');
+    var regLabel = regSel.options[regSel.selectedIndex] ? regSel.options[regSel.selectedIndex].text : '—';
+    var offVal = document.getElementById('location_office').value || '—';
+    html += row('Region', regLabel);
+    html += row('Office', offVal);
+  }
+  html += '<\/div>';
+
+  html += '<div class="review-section">';
+  html += '<div class="review-section-title">Notes<\/div>';
+  html += row('Purpose', document.getElementById('purpose').value || '—');
+  var parts = document.getElementById('participants').value.trim();
+  if (parts) html += row('Participants', parts);
+  var spec = document.getElementById('special').value.trim();
+  if (spec) html += row('Special Notes', spec);
+  html += '<\/div>';
+
+  document.getElementById('review-content').innerHTML = html;
+}
+
+function row(key, val, accent) {
+  return '<div class="review-row"><span class="review-key">' + key + '<\/span><span class="review-val' + (accent ? ' accent' : '') + '">' + val + '<\/span><\/div>';
+}
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  if (!validateSection(currentSection)) return;
+  if (currentSection < totalSections - 1) {
+    goTo(currentSection + 1);
+  } else {
+    submitForm();
+  }
+});
+document.getElementById('btn-prev').addEventListener('click', function() {
+  if (currentSection > 0) goTo(currentSection - 1);
+});
+
+function submitForm() {
+  // ── Collect all form data ──
+  var now = new Date();
+  var pad = function(n) { return String(n).padStart(2,'0'); };
+  var datePart = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate());
+  var randPart = Math.random().toString(36).substring(2,7).toUpperCase();
+  var ref = 'MTG-' + datePart + '-' + randPart;
+
+  var firstName = document.getElementById('first_name').value.trim();
+  var lastName  = document.getElementById('last_name').value.trim();
+  var fullName  = firstName + ' ' + lastName;
+  var email     = document.getElementById('email').value.trim();
+  var phone     = document.getElementById('phone').value.trim();
+  var duration  = document.getElementById('duration').value;
+  var purpose   = document.getElementById('purpose').value.trim();
+  var participants = document.getElementById('participants').value.trim();
+  var special   = document.getElementById('special').value.trim();
+  var platform  = document.getElementById('platform').value;
+
+  var regSel = document.getElementById('location_region');
+  var regionLabel = (regSel.selectedIndex > 0) ? regSel.options[regSel.selectedIndex].text : '';
+  var officeVal   = document.getElementById('location_office').value;
+
+  var dateDisplay = selectedDate
+    ? new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
+    : '—';
+
+  // ── Store for downloadSlip ──
+  window._mtgData = {
+    ref: ref, fullName: fullName, email: email, phone: phone,
+    date: dateDisplay, time: selectedTime || '—', duration: duration,
+    type: selectedMtgType, platform: platform,
+    region: regionLabel, office: officeVal,
+    purpose: purpose, participants: participants, special: special,
+    submittedAt: now.toLocaleString()
+  };
+
+  // ── Update confirmation screen ──
+  document.getElementById('conf-ref-code').textContent = ref;
+
+  var rows = [
+    ['Name', fullName], ['Email', email],
+    ['Date', dateDisplay], ['Time', selectedTime || '—'],
+    ['Duration', duration], ['Type', selectedMtgType || '—'],
+    ['Purpose', purpose.substring(0,80) + (purpose.length > 80 ? '…' : '')]
+  ];
+  if (selectedMtgType === 'Virtual (Video Call)' && platform) rows.push(['Platform', platform]);
+  if (selectedMtgType === 'In-person') {
+    if (regionLabel) rows.push(['Region', regionLabel]);
+    if (officeVal)   rows.push(['Office', officeVal]);
+  }
+  if (phone) rows.push(['Phone', phone]);
+
+  document.getElementById('conf-details').innerHTML = rows.map(function(r) {
+    return '<div class="conf-row"><span class="conf-key">' + r[0] + '<\/span><span class="conf-val">' + r[1] + '<\/span><\/div>';
+  }).join('');
+
+  // ── Save to Firestore ──
+  (function saveToFirestore() {
+    try {
+      var record = {
+        applicant_id: ref,
+        fullname:     fullName,
+        contact:      email + (phone ? ' / ' + phone : ''),
+        form:         'Meeting Scheduler',
+        meeting_date: selectedDate || '',
+        meeting_time: selectedTime || '',
+        duration:     duration,
+        meeting_type: selectedMtgType,
+        platform:     platform || '',
+        region:       regionLabel || '',
+        office:       officeVal || '',
+        purpose:      purpose,
+        participants: participants,
+        special:      special,
+        createdAt:    now.toISOString(),
+        pdf:          'MTG_' + lastName + '_' + firstName + '_' + datePart + '.html'
+      };
+      firebase.firestore().collection('submissions').add(record).catch(function(e) {
+        console.error('Firestore save failed:', e);
+      });
+    } catch(e) {
+      console.error('Firestore error:', e);
+    }
+  })();
+
+  // ── Show confirmation ──
+  document.getElementById('main-wrap').style.display = 'none';
+  document.getElementById('nav-bar').style.display = 'none';
+  document.querySelector('.form-hero').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.getElementById('confirmation-screen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Generate & download meeting slip HTML ──
+function downloadSlip() {
+  var d = window._mtgData;
+  if (!d) return;
+
+  // ── row() must be defined BEFORE it is used ──
+  function slipRow(key, val) {
+    return '<div class="sr"><span class="sk">' + key + '<\/span><span class="sv">' + (val || '\u2014') + '<\/span><\/div>';
+  }
+  function slipSection(title, content) {
+    return '<div class="ss"><div class="st">' + title + '<\/div>' + content + '<\/div>';
+  }
+
+  // ── Build sections ──
+  var secContact = slipRow('Full Name', d.fullName) +
+                   slipRow('Email', d.email) +
+                   (d.phone ? slipRow('Phone', d.phone) : '');
+
+  var secMeeting = slipRow('Date', d.date) +
+                   slipRow('Time', d.time) +
+                   slipRow('Duration', d.duration) +
+                   slipRow('Type', d.type) +
+                   (d.type === 'Virtual (Video Call)' && d.platform ? slipRow('Platform', d.platform) : '') +
+                   (d.type === 'In-person' && d.region ? slipRow('Region', d.region) : '') +
+                   (d.type === 'In-person' && d.office ? slipRow('Office', d.office) : '');
+
+  var secNotes   = slipRow('Purpose', d.purpose) +
+                   (d.participants ? slipRow('Participants', d.participants) : '') +
+                   (d.special ? slipRow('Special Notes', d.special) : '');
+
+  var secInfo    = slipRow('Submitted', d.submittedAt) +
+                   '<p style="font-size:11px;color:#aaa;margin-top:8px;">This is a meeting request slip. Your meeting is subject to confirmation by PCA staff via email.<\/p>';
+
+  // ── CSS (no quotes that clash with the outer JS string) ──
+  var css = [
+    'body{font-family:Arial,sans-serif;margin:0;padding:16px;background:#f5f5f5;}',
+    '.slip{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12);}',
+    '.slip-header{background:linear-gradient(135deg,#1a5c2e,#2d7a44);color:#fff;padding:24px 20px;text-align:center;}',
+    '.slip-header img{width:72px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}',
+    '.slip-header h1{font-size:20px;margin:0 0 4px;}',
+    '.slip-header p{font-size:12px;opacity:.8;margin:0;}',
+    '.ref-band{background:#e8f3ec;border-bottom:1px solid #c8d8cc;padding:12px 20px;text-align:center;}',
+    '.ref-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2d7a44;}',
+    '.ref-code{font-family:monospace;font-size:22px;font-weight:700;color:#1a5c2e;letter-spacing:.1em;}',
+    '.ss{padding:14px 20px;border-bottom:1px solid #f0f0e8;}',
+    '.ss:last-of-type{border-bottom:none;}',
+    '.st{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#c5920a;background:#fdf6e3;border:1px solid #e8d5a0;border-radius:4px;padding:2px 8px;display:inline-block;margin-bottom:10px;}',
+    '.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f0;font-size:13px;}',
+    '.sr:last-of-type{border-bottom:none;}',
+    '.sk{color:#888;flex-shrink:0;width:130px;}',
+    '.sv{font-weight:600;color:#1a1a18;text-align:right;flex:1;}',
+    '.slip-footer{background:#1a5c2e;color:rgba(255,255,255,.7);text-align:center;padding:14px;font-size:11px;}',
+    '.print-btn{display:block;margin:20px auto;background:#1a5c2e;color:white;border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer;font-family:Arial,sans-serif;}',
+    '@media print{body{background:#fff;padding:0;}.slip{box-shadow:none;border-radius:0;}.print-btn{display:none;}}'
+  ].join('');
+
+  // ── Assemble full HTML ──
+  var parts = [
+    '<!DOCTYPE html>',
+    '<html lang="en">',
+    '<head>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width,initial-scale=1">',
+    '<title>Meeting Slip ' + d.ref + '<\/title>',
+    '<style>' + css + '<\/style>',
+    '<\/head>',
+    '<body>',
+    '<div class="slip">',
+      '<div class="slip-header">',
+        '<img src="https://i.postimg.cc/mkLXZZNJ/PCA-LOGO.png" alt="PCA">',
+        '<h1>Philippine Coconut Authority<\/h1>',
+        '<p>Meeting Request Slip<\/p>',
+      '<\/div>',
+      '<div class="ref-band">',
+        '<div class="ref-label">Reference Number<\/div>',
+        '<div class="ref-code">' + d.ref + '<\/div>',
+      '<\/div>',
+      slipSection('Contact Information', secContact),
+      slipSection('Meeting Details', secMeeting),
+      slipSection('Agenda and Notes', secNotes),
+      slipSection('Submission Info', secInfo),
+      '<div class="slip-footer">Philippine Coconut Authority | pca.gov.ph<\/div>',
+    '<\/div>',
+    '<button class="print-btn" onclick="window.print()">Print This Slip<\/button>',
+    '<\/body>',
+    '<\/html>'
+  ];
+  var html = parts.join('');
+
+  // ── Download ──
+  var now2 = new Date();
+  var pad2 = function(n) { return String(n).padStart(2, '0'); };
+  var datePart2 = now2.getFullYear() + pad2(now2.getMonth() + 1) + pad2(now2.getDate());
+  var nameParts = (d.fullName || '').trim().split(' ');
+  var lastName2  = nameParts[nameParts.length - 1] || 'Unknown';
+  var firstName2 = nameParts[0] || 'Unknown';
+  var fileName = 'MTG_' + lastName2 + '_' + firstName2 + '_' + datePart2 + '.html';
+
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  var blob = new Blob([html], { type: 'text/html' });
+  var blobUrl = URL.createObjectURL(blob);
+
+  if (isIOS) {
+    window.open(blobUrl, '_blank');
+  } else {
+    var a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 5000);
+  }
+}
+
+function schedulAnother() {
+  document.getElementById('confirmation-screen').classList.remove('show');
+  document.getElementById('main-wrap').style.display = '';
+  document.getElementById('nav-bar').style.display = '';
+  document.querySelector('.form-hero').style.display = '';
+  document.querySelector('.progress-wrap').style.display = '';
+  // reset
+  currentSection = 0;
+  selectedDate = null; selectedTime = null; termsAccepted = false; selectedMtgType = '';
+  document.querySelectorAll('input[type=text], input[type=email], input[type=tel], textarea, select').forEach(function(el) { el.value = ''; });
+  document.querySelectorAll('.radio-item').forEach(function(el) { el.classList.remove('selected'); });
+  document.getElementById('terms-label').classList.remove('checked');
+  document.getElementById('platform-field').style.display = 'none';
+  document.getElementById('location-field').style.display = 'none';
+  document.getElementById('location-office-field').style.display = 'none';
+  document.getElementById('time-field').style.display = 'none';
+  for (var i = 0; i < totalSections; i++) {
+    var s = document.getElementById('section-' + i);
+    if (s) s.classList.toggle('active', i === 0);
+  }
+  goTo(0);
+  renderCalendar();
+  updateDtDisplay();
+}
+</script>
+</body>
+</html>
