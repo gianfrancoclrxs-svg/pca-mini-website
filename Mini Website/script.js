@@ -140,3 +140,56 @@ window.addEventListener('DOMContentLoaded', () => {
   const bubble = document.getElementById('chatBubble');
   if (bubble) setTimeout(() => { bubble.style.opacity = '0'; }, 10000);
 });
+
+async function loadFeed() {
+  const container = document.getElementById('fb-feed');
+  const RSS_URL = 'https://rss.app/feeds/v1.1/PtJHeHXlHaSviAeB.json';
+  const FB_PAGE = 'https://www.facebook.com/PhilippineCoconutAuthority';
+
+  container.innerHTML = `<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.6);font-size:13px;">Loading posts...</div>`;
+
+  try {
+    const res  = await fetch(RSS_URL);
+    const data = await res.json();
+    const items = (data.items || []).slice(0, 5);
+
+    if (!items.length) throw new Error('No items');
+
+    container.innerHTML = '';
+
+    items.forEach((item, i) => {
+      const date = new Date(item.date_published || item.pubDate).toLocaleDateString('en-PH', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      });
+      const text = (item.content_text || item.content_html?.replace(/<[^>]+>/g,'') || item.summary || '').trim();
+      const img  = item.image || item.banner_image || null;
+      const url  = item.url || FB_PAGE;
+
+      const card = document.createElement('div');
+      card.className = 'fb-post-card';
+      
+
+      card.innerHTML = `
+        ${img ? `<img src="${img}" alt="" class="fb-post-img">` : ''}
+        <div class="fb-post-body">
+          <p class="fb-post-date">${date}</p>
+          <p class="fb-post-text">${text.length > 220 ? text.slice(0, 220) + '…' : text}</p>
+          <a href="${url}" target="_blank" class="fb-post-link">View on Facebook →</a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const btn = document.createElement('a');
+    btn.href = FB_PAGE;
+    btn.target = '_blank';
+    btn.className = 'fb-see-more';
+    btn.textContent = 'See more on Facebook';
+    container.appendChild(btn);
+
+  } catch (e) {
+    container.innerHTML = `<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.6);font-size:13px;">Could not load posts.</div>`;
+  }
+}
+
+loadFeed();

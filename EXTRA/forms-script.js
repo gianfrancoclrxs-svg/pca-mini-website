@@ -11,7 +11,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Category → icon mapping
+
 const categoryIcons = {
   "application":   "fa-file-pen",
   "letter":        "fa-envelope",
@@ -55,7 +55,7 @@ async function loadForms() {
       if (data.type) categories.add(data.type);
     });
 
-    // Build category filter pills
+    
     const filterRow = document.getElementById("filterRow");
     categories.forEach(cat => {
       const btn = document.createElement("button");
@@ -126,7 +126,7 @@ function buildCard(data) {
     ${data.description ? `<div class="form-desc">${data.description}</div>` : ""}
   `;
 
-  // Support both fileURL and legacy base64
+  
   if (data.fileURL) {
     const btnRow = document.createElement("div");
     btnRow.className = "btn-row";
@@ -173,7 +173,7 @@ function buildCard(data) {
   return card;
 }
 
-// View base64 PDF in new tab
+
 function viewBase64(base64) {
   const byteChars = atob(base64);
   const byteArr = new Uint8Array(byteChars.length);
@@ -184,7 +184,7 @@ function viewBase64(base64) {
   setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
 }
 
-// Download using fileURL
+
 function downloadFileURL(url, fileName) {
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) && !window.MSStream;
   if (isIOS) {
@@ -200,7 +200,7 @@ function downloadFileURL(url, fileName) {
   document.body.removeChild(link);
 }
 
-// Download using base64 (legacy uploads — keep so old forms still work)
+
 function downloadBase64(base64, fileName) {
   const byteChars = atob(base64);
   const byteArr = new Uint8Array(byteChars.length);
