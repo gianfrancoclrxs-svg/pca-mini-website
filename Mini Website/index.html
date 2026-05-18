@@ -206,16 +206,18 @@
 
 <div class="chat-box" id="chatBox">
   <div class="chat-header">
-    <div style="display:flex;align-items:center;gap:8px">
+    <div class="chat-header-left">
       <div style="width:8px;height:8px;border-radius:50%;background:#6de04a;box-shadow:0 0 6px #6de04a"></div>
       PCA Chatbot
     </div>
-    <span onclick="toggleChat()">✕</span>
+    <div class="chat-header-actions">
+      <button class="chat-header-btn" onclick="closeChat()" title="Close" aria-label="Close">&#x2715;</button>
+    </div>
   </div>
   <div class="chat-body" id="chatBody"></div>
 </div>
 
-<script src="script.js"></script>
+<script src="chatbot.js"></script>
 <script defer src="/_vercel/analytics/script.js"></script>
 </body>
 </html>
