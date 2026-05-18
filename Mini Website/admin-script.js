@@ -57,21 +57,35 @@ function formCategory(formName) {
 ───────────────────────────────────────── */
 function statusBadgeHtml(status) {
   var s = (status || 'active').toLowerCase();
-  var labels = { active: 'Active', completed: 'Completed', cancelled: 'Cancelled' };
+  var labels = { pending: 'Pending Verification', active: 'Active', verified: 'Verified', rejected: 'Rejected', completed: 'Completed', cancelled: 'Cancelled' };
   var label  = labels[s] || 'Active';
   return '<span class="status-badge status-' + s + '">' + label + '</span>';
 }
 
-function actionButtonsHtml(docId, status) {
+function actionButtonsHtml(docId, status, formName) {
   var s = (status || 'active').toLowerCase();
+  var isMeeting = formCategory(formName) === 'meeting';
   var btns = '';
-  if (s === 'active') {
+
+  if (isMeeting && s === 'pending') {
+    btns +=
+      '<button class="action-btn verify-btn"  onclick="setStatus(\'' + docId + '\',\'verified\')">✔ Verify</button>' +
+      '<button class="action-btn reject-btn"  onclick="setStatus(\'' + docId + '\',\'rejected\')">✖ Reject</button>';
+  } else if (isMeeting && s === 'verified') {
+    btns +=
+      '<button class="action-btn complete-btn" onclick="setStatus(\'' + docId + '\',\'completed\')">✔ Complete</button>' +
+      '<button class="action-btn cancel-btn"   onclick="setStatus(\'' + docId + '\',\'cancelled\')">✖ Cancel</button>' +
+      '<button class="action-btn restore-btn"  onclick="setStatus(\'' + docId + '\',\'pending\')">↩ Unverify</button>';
+  } else if (isMeeting && (s === 'rejected' || s === 'cancelled' || s === 'completed')) {
+    btns += '<button class="action-btn restore-btn" onclick="setStatus(\'' + docId + '\',\'pending\')">↩ Restore</button>';
+  } else if (s === 'active') {
     btns +=
       '<button class="action-btn complete-btn" onclick="setStatus(\'' + docId + '\',\'completed\')">✔ Complete</button>' +
       '<button class="action-btn cancel-btn"   onclick="setStatus(\'' + docId + '\',\'cancelled\')">✖ Cancel</button>';
   } else {
     btns += '<button class="action-btn restore-btn" onclick="setStatus(\'' + docId + '\',\'active\')">↩ Restore</button>';
   }
+
   btns += '<button class="action-btn delete-btn" onclick="deleteRecord(\'submissions\',\'' + docId + '\',\'submissions\')">Delete</button>';
   return btns;
 }
@@ -136,7 +150,7 @@ function renderSubmissions() {
       '<td>' + pdfHtml               + '</td>' +
       '<td>' + statusBadgeHtml(status) + '</td>' +
       '<td>' + dateStr               + '</td>' +
-      '<td style="white-space:nowrap"><div style="display:flex;gap:6px;flex-wrap:wrap">' + actionButtonsHtml(docId, status) + '</div></td>';
+      '<td style="white-space:nowrap"><div style="display:flex;gap:6px;flex-wrap:wrap">' + actionButtonsHtml(docId, status, d.form) + '</div></td>';
     tbody.appendChild(tr);
 
     // ── MOBILE CARD ──
@@ -176,7 +190,7 @@ function renderSubmissions() {
 
     var actions = document.createElement('div');
     actions.className = 'card-actions';
-    actions.innerHTML = actionButtonsHtml(docId, status);
+    actions.innerHTML = actionButtonsHtml(docId, status, d.form);
     card.appendChild(actions);
     cards.appendChild(card);
   });

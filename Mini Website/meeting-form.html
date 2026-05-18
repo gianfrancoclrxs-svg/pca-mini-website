@@ -1175,7 +1175,8 @@ function submitForm() {
     participants: participants,
     special:      special,
     createdAt:    now.toISOString(),
-    pdf:          fileName
+    pdf:          fileName,
+    status:       'pending'
   };
 
   // ── Show confirmation immediately (don't wait for PDF) ──

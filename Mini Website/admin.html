@@ -315,6 +315,12 @@
   .status-completed::before { background: #1e88e5; }
   .status-cancelled { background: #fce4ec; color: #880e4f; }
   .status-cancelled::before { background: #e53935; }
+  .status-pending   { background: #fff8e1; color: #7c5a00; }
+  .status-pending::before   { background: #f9a825; box-shadow: 0 0 0 2px #ffe082; animation: pulse 2s infinite; }
+  .status-verified  { background: #e8f5e9; color: #1b5e20; }
+  .status-verified::before  { background: #2e7d32; box-shadow: 0 0 0 2px #a5d6a7; }
+  .status-rejected  { background: #fce4ec; color: #880e4f; }
+  .status-rejected::before  { background: #c62828; }
   @keyframes pulse {
     0%, 100% { box-shadow: 0 0 0 2px #a5d6a7; }
     50%       { box-shadow: 0 0 0 4px #c8e6c9; }
@@ -324,6 +330,8 @@
   .complete-btn { background: #1e88e5; color: white; }
   .cancel-btn   { background: #ff7043; color: white; }
   .restore-btn  { background: #757575; color: white; }
+  .verify-btn   { background: #2e7d32; color: white; }
+  .reject-btn   { background: #c62828; color: white; }
 
   /* ── BULK TOOLBAR ── */
   .bulk-toolbar {
