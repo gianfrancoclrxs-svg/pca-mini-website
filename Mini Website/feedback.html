@@ -3,50 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PCA Satisfaction</title>
+  <title>PCA Client Satisfaction Feedback</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* ── FEEDBACK CARD ── */
     .feedback-card {
       margin-bottom: 12px;
-      padding: 14px;
+      padding: 20px 18px;
       border-radius: 18px;
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.18);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.14);
       color: white;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12);
+      overflow: visible;
     }
 
     .feedback-card-header {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 18px;
     }
 
     .feedback-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 44px; height: 44px;
+      border-radius: 13px;
       background: rgba(255,255,255,0.15);
       border: 1px solid rgba(255,255,255,0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px;
       flex-shrink: 0;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
       color: rgba(255,255,255,0.85);
     }
 
     .feedback-title {
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.35;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.3;
       margin-bottom: 4px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      color: #ffffff;
     }
 
     .feedback-badge {
@@ -62,199 +60,374 @@
       color: #c8f5b8;
     }
 
-    .feedback-card select {
-      width: 100%;
-      margin: 0 0 14px;
-      padding: 10px;
+    /* ── PROGRESS ── */
+    .progress-wrap {
+      margin-bottom: 18px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.5px;
+      margin-bottom: 7px;
+    }
+    .progress-bar-bg {
+      height: 5px;
       border-radius: 10px;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.12);
-      color: white;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      box-sizing: border-box;
-      transition: opacity 0.2s;
+      background: rgba(255,255,255,0.15);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #6de04a, #2db80f);
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
     }
 
-    .feedback-card select option {
-      color: #1a7a10;
-      background: #fff;
-    }
+    /* ── STEPS ── */
+    .step { display: none; }
+    .step.active { display: block; }
 
-    .feedback-card select:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+    .step-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: #6de04a;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(109,224,74,0.12);
+      border-radius: 9px;
+      border-left: 3px solid rgba(109,224,74,0.8);
     }
+    .step-title i { font-size: 14px; }
 
+    /* ── FIELD LABELS ── */
     .field-label {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.6px;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 8px;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 6px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .field-label:first-child { margin-top: 0; }
+    .field-label .req { color: #ffb3b3; margin-left: 2px; font-size: 13px; }
+
+    /* ── FIELD INPUTS ── */
+    .field-input {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .field-input:focus {
+      border-color: #6de04a;
+      background: rgba(255,255,255,0.22);
+    }
+    .field-input::placeholder { color: rgba(255,255,255,0.5); }
+    .field-input option { color: #111; background: #f5fff5; }
+    .field-input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    select.field-input {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.7)' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 34px;
     }
 
+    /* ── RADIO GROUP ── */
+    .radio-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .radio-chip {
+      flex: 1;
+      min-width: 80px;
+      position: relative;
+    }
+    .radio-chip input { display: none; }
+    .radio-chip label {
+      display: block;
+      text-align: center;
+      padding: 10px 10px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.88);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .radio-chip input:checked + label {
+      border-color: #6de04a;
+      background: rgba(109,224,74,0.22);
+      color: #d4ffc2;
+      box-shadow: 0 0 0 3px rgba(109,224,74,0.15);
+    }
+    .radio-chip label:hover { background: rgba(255,255,255,0.12); }
+
+    /* ── SQD ROWS ── */
+    .sqd-row {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .sqd-row:last-child { border-bottom: none; }
+    .sqd-question {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .sqd-question span {
+      display: inline-block;
+      font-weight: 800;
+      color: #6de04a;
+      margin-right: 4px;
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      background: rgba(109,224,74,0.15);
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+
+    /* (unused likert CSS kept for compatibility) */
+    .likert-wrap { display: flex; gap: 4px; flex-wrap: wrap; }
+    .likert-opt { position: relative; flex: 1; min-width: 60px; }
+    .likert-opt input { display: none; }
+    .likert-opt label {
+      display: block; text-align: center; padding: 6px 4px;
+      border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.75);
+      font-size: 10px; font-weight: 700; cursor: pointer;
+    }
+
+    /* ── CC Dropdown ── */
+    .cc-group { margin-bottom: 0; }
+
+    /* ── STAR RATING (overall) ── */
     .radio {
       display: flex;
       justify-content: center;
       gap: 8px;
       flex-direction: row-reverse;
-      margin: 4px 0 6px;
+      margin: 6px 0 4px;
     }
-
     .radio > input { display: none; }
-
     .radio > label {
       cursor: pointer;
       position: relative;
       display: inline-block;
       transition: transform 0.3s ease;
     }
-
     .radio > label > svg {
       fill: rgba(255,255,255,0.3);
       transition: fill 0.3s ease;
-      width: 2em;
-      height: 2em;
+      width: 2.1em; height: 2.1em;
       display: block;
     }
-
-    .radio > label::before,
-    .radio > label::after {
-      content: "";
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background-color: #ff9e0b;
-      border-radius: 50%;
-      opacity: 0;
-      transform: scale(0);
-      transition: transform 0.4s ease, opacity 0.4s ease;
-    }
-
-    .radio > label::before { top: -14px; left: 50%; transform: translateX(-50%) scale(0); }
-    .radio > label::after  { bottom: -14px; left: 50%; transform: translateX(-50%) scale(0); }
-
-    .radio > label:hover::before,
-    .radio > label:hover::after {
-      opacity: 1;
-      transform: translateX(-50%) scale(1.5);
-    }
-
-    .radio > label:hover { transform: scale(1.2); animation: star-pulse 0.6s infinite alternate; }
-
+    .radio > label:hover { transform: scale(1.2); }
     .radio > label:hover > svg,
     .radio > label:hover ~ label > svg {
       fill: #ff9e0b;
-      filter: drop-shadow(0 0 15px rgba(255,158,11,0.9));
-      animation: star-shimmer 1s ease infinite alternate;
+      filter: drop-shadow(0 0 12px rgba(255,158,11,0.9));
     }
-
     .radio > input:checked + label > svg,
     .radio > input:checked + label ~ label > svg {
       fill: #ff9e0b;
-      filter: drop-shadow(0 0 15px rgba(255,158,11,0.9));
-      animation: star-pulse 0.8s infinite alternate;
+      filter: drop-shadow(0 0 12px rgba(255,158,11,0.9));
     }
-
-    .radio > input:checked + label:hover > svg,
-    .radio > input:checked + label:hover ~ label > svg { fill: #e58e09; }
-
     .radio input:checked ~ label svg { fill: #ffa723; }
-
-    @keyframes star-pulse {
-      0%  { transform: scale(1); }
-      100%{ transform: scale(1.1); }
-    }
-
-    @keyframes star-shimmer {
-      0%  { filter: drop-shadow(0 0 10px rgba(255,158,11,0.5)); }
-      100%{ filter: drop-shadow(0 0 20px rgba(255,158,11,1)); }
-    }
 
     .rating-hint {
       text-align: center;
-      color: rgba(255,255,255,0.55);
-      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.3px;
-      margin: 4px 0 14px;
+      margin: 6px 0 12px;
     }
 
-    .feedback-card textarea {
+    /* ── TEXTAREA ── */
+    .field-textarea {
       width: 100%;
-      min-height: 90px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.12);
-      color: white;
-      font-family: inherit;
-      font-size: 13px;
-      resize: vertical;
-      box-sizing: border-box;
-      margin: 0 0 14px;
-    }
-
-    .feedback-card textarea::placeholder { color: rgba(255,255,255,0.5); }
-
-    .btn-row { display: flex; gap: 8px; }
-
-    #submitFeedback {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      flex: 1;
-      padding: 11px;
-      border-radius: 10px;
-      border: none;
-      background: var(--green-dark);
-      color: white;
-      font-size: 13px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(26,122,16,0.45);
-      transition: filter 0.2s, transform 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #submitFeedback:hover  { filter: brightness(1.12); }
-    #submitFeedback:active { transform: scale(0.97); }
-
-    .back-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      flex: 1;
-      padding: 11px;
+      min-height: 88px;
+      padding: 11px 13px;
       border-radius: 10px;
       border: 1.5px solid rgba(255,255,255,0.35);
       background: rgba(255,255,255,0.15);
-      color: white;
-      font-size: 13px;
-      font-weight: 700;
+      color: #ffffff;
       font-family: inherit;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      margin-top: 0;
-      width: auto;
+      font-size: 14px;
+      resize: vertical;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .field-textarea:focus {
+      border-color: #6de04a;
+      background: rgba(255,255,255,0.22);
+    }
+    .field-textarea::placeholder { color: rgba(255,255,255,0.5); }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
     }
 
-    .back-btn:hover  { background: rgba(255,255,255,0.26); }
-    .back-btn:active { transform: scale(0.97); }
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.15s;
+    }
+    .nav-btn:active { transform: scale(0.97); }
+
+    .btn-back {
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: white;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.24); }
+
+    .btn-next {
+      background: var(--g2, #1a7a10);
+      color: white;
+      box-shadow: 0 3px 10px rgba(26,122,16,0.45);
+    }
+    .btn-next:hover { filter: brightness(1.13); }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2db80f, #1a7a10);
+      color: white;
+      box-shadow: 0 3px 12px rgba(26,122,16,0.5);
+    }
+    .btn-submit:hover { filter: brightness(1.12); }
+
+    /* ── OPTIONAL BADGE ── */
+    .opt-badge {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 2px 7px;
+      border-radius: 8px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.45);
+      vertical-align: middle;
+    }
+
+    /* ── SQD SELECT ── */
+    .sqd-select {
+      margin-top: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      color: white;
+      cursor: pointer;
+    }
+    .sqd-select:focus { border-color: #6de04a; }
+    .sqd-select option { color: #111; background: #f5fff5; }
+
+    /* Fix dropdown overflow - ensure native selects aren't clipped */
+    .feedback-card { overflow: visible !important; }
+    .mobile-frame { overflow: visible !important; }
+
+    /* Override style.css global input/select/textarea rules */
+    .feedback-card input,
+    .feedback-card textarea,
+    .feedback-card select {
+      width: 100%;
+      margin-top: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      color: inherit;
+      font-family: inherit;
+    }
+    /* Re-apply our own rules on top */
+    .feedback-card .field-input,
+    .feedback-card .field-textarea,
+    .feedback-card .sqd-select {
+      padding: 11px 13px !important;
+      border: 1.5px solid rgba(255,255,255,0.35) !important;
+      background: rgba(255,255,255,0.15) !important;
+      color: #ffffff !important;
+      font-size: 14px !important;
+      border-radius: 10px !important;
+      margin-top: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .feedback-card select.field-input,
+    .feedback-card select.sqd-select {
+      padding-right: 34px !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.55)' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 12px center !important;
+      cursor: pointer !important;
+    }
+    .feedback-card .field-input:focus,
+    .feedback-card .field-textarea:focus,
+    .feedback-card .sqd-select:focus {
+      border-color: #6de04a !important;
+      background: rgba(255,255,255,0.22) !important;
+      outline: none !important;
+    }
+
+    /* ── HIDDEN ── */
+    .hidden { display: none !important; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 14px 0;
+    }
   </style>
 </head>
 <body>
 <div class="mobile-frame">
 
   <header class="header">
-    <h2>Satisfaction</h2>
+    <h2>Client Satisfaction</h2>
   </header>
 
   <div class="section" style="padding: 14px;">
@@ -263,133 +436,492 @@
       <!-- Header -->
       <div class="feedback-card-header">
         <div class="feedback-icon">
-          <i class="fa fa-star"></i>
+          <i class="fa fa-clipboard-list"></i>
         </div>
         <div style="flex:1; min-width:0;">
-          <div class="feedback-title">Rate PCA Services</div>
-          <span class="feedback-badge">Feedback</span>
+          <div class="feedback-title">Client Satisfaction Feedback Form</div>
+          <span class="feedback-badge">Official PCA Survey</span>
         </div>
       </div>
 
-      <!-- Region -->
-      <div class="field-label">Select Region</div>
-      <select id="regionSelect">
-        <option value="">-- Select Region --</option>
-        <option value="ncr">NCR / Central Office</option>
-        <option value="car">CAR</option>
-        <option value="region1">Region I</option>
-        <option value="region2">Region II</option>
-        <option value="region3">Region III</option>
-        <option value="region4a">Region IV-A</option>
-        <option value="region4b">Region IV-B</option>
-        <option value="region5">Region V</option>
-        <option value="region6">Region VI</option>
-        <option value="region7">Region VII</option>
-        <option value="region8">Region VIII</option>
-        <option value="region9">Region IX</option>
-        <option value="region10">Region X</option>
-        <option value="region11">Region XI</option>
-        <option value="region12">Region XII</option>
-        <option value="region13">Region XIII (Caraga)</option>
-        <option value="barmm">BARMM</option>
-      </select>
-
-      <!-- Office (populated by region) -->
-      <div class="field-label">Select Office</div>
-      <select id="officeSelect" disabled>
-        <option value="">-- Select Office --</option>
-      </select>
-
-      <!-- Star rating -->
-      <div class="field-label">Your Rating</div>
-      <div class="radio" id="starRating">
-        <input id="rating-5" type="radio" name="rating" value="5">
-        <label for="rating-5" title="5 stars">
-          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        </label>
-        <input id="rating-4" type="radio" name="rating" value="4">
-        <label for="rating-4" title="4 stars">
-          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        </label>
-        <input id="rating-3" type="radio" name="rating" value="3">
-        <label for="rating-3" title="3 stars">
-          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        </label>
-        <input id="rating-2" type="radio" name="rating" value="2">
-        <label for="rating-2" title="2 stars">
-          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        </label>
-        <input id="rating-1" type="radio" name="rating" value="1">
-        <label for="rating-1" title="1 star">
-          <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        </label>
-      </div>
-      <p class="rating-hint" id="ratingHint">Tap a star to rate</p>
-
-      <!-- Comment -->
-      <div class="field-label">Your Feedback</div>
-      <textarea id="comment" placeholder="Share your experience..."></textarea>
-
-      <!-- Buttons -->
-      <div class="btn-row">
-        <button class="back-btn" onclick="location.href='index.html'">
-          <i class="fa fa-arrow-left"></i> Back
-        </button>
-        <button id="submitFeedback">
-          <i class="fa fa-paper-plane"></i> Submit
-        </button>
+      <!-- Progress -->
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="stepLabel">Step 1 of 4</span>
+          <span id="stepPercent">25%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill" style="width:25%"></div>
+        </div>
       </div>
 
-    </div>
+      <!-- ═══════════════════════════════════════ -->
+      <!-- STEP 1 — Office & Client Info           -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="step active" id="step1">
+        <div class="step-title"><i class="fa fa-building"></i> Office &amp; Client Info</div>
+
+        <div class="field-label">PCA Office Being Rated <span class="req">*</span></div>
+        <input class="field-input" type="text" id="pcaOffice" placeholder="e.g. PCA Region IV-A Regional Office">
+
+        <div class="field-label">Address of PCA Office <span class="req">*</span></div>
+        <input class="field-input" type="text" id="pcaAddress" placeholder="e.g. Calamba City, Laguna">
+
+        <div class="field-label">Date <span class="req">*</span></div>
+        <input class="field-input" type="date" id="visitDate">
+
+        <div class="field-label">Client Type <span class="req">*</span></div>
+        <div class="radio-group">
+          <div class="radio-chip">
+            <input type="radio" name="clientType" id="ct-citizen" value="Citizen">
+            <label for="ct-citizen">Citizen</label>
+          </div>
+          <div class="radio-chip">
+            <input type="radio" name="clientType" id="ct-business" value="Business">
+            <label for="ct-business">Business</label>
+          </div>
+          <div class="radio-chip">
+            <input type="radio" name="clientType" id="ct-govt" value="Government Employee">
+            <label for="ct-govt">Govt. Employee</label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-label">Full Name <span class="opt-badge">Optional</span></div>
+        <input class="field-input" type="text" id="fullName" placeholder="First name, M.I., Last name">
+
+        <div class="field-label">Date of Birth <span class="opt-badge">Optional</span></div>
+        <input class="field-input" type="date" id="dob">
+
+        <div class="field-label">Sex <span class="opt-badge">Optional</span></div>
+        <select class="field-input" id="sex">
+          <option value="">-- Select --</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Prefer not to say</option>
+        </select>
+
+        <div class="field-label">Residence Address <span class="opt-badge">Optional</span></div>
+        <input class="field-input" type="text" id="residenceAddress" placeholder="Street, City, Province">
+
+        <div class="field-label">Region of Residence <span class="opt-badge">Optional</span></div>
+        <select class="field-input" id="regionOfResidence">
+          <option value="">-- Select Region --</option>
+          <option>NCR (National Capital Region)</option>
+          <option>CAR (Cordillera Administrative Region)</option>
+          <option>Region I – Ilocos Region</option>
+          <option>Region II – Cagayan Valley</option>
+          <option>Region III – Central Luzon</option>
+          <option>Region IV-A – CALABARZON</option>
+          <option>Region IV-B – MIMAROPA</option>
+          <option>Region V – Bicol Region</option>
+          <option>Region VI – Western Visayas</option>
+          <option>Region VII – Central Visayas</option>
+          <option>Region VIII – Eastern Visayas</option>
+          <option>Region IX – Zamboanga Peninsula</option>
+          <option>Region X – Northern Mindanao</option>
+          <option>Region XI – Davao Region</option>
+          <option>Region XII – SOCCSKSARGEN</option>
+          <option>Region XIII – Caraga</option>
+          <option>BARMM</option>
+        </select>
+
+        <div class="field-label">Affiliation <span class="req">*</span></div>
+        <input class="field-input" type="text" id="affiliation" placeholder="e.g. Company, Agency, or Individual">
+
+        <div class="field-label">Service Type <span class="req">*</span></div>
+        <div class="radio-group">
+          <div class="radio-chip">
+            <input type="radio" name="serviceType" id="st-internal" value="Internal" onchange="toggleServiceType()">
+            <label for="st-internal">Internal</label>
+          </div>
+          <div class="radio-chip">
+            <input type="radio" name="serviceType" id="st-external" value="External" onchange="toggleServiceType()">
+            <label for="st-external">External</label>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="nav-btn btn-back" onclick="location.href='index.html'">
+            <i class="fa fa-arrow-left"></i> Back
+          </button>
+          <button class="nav-btn btn-next" onclick="goNext(1)">
+            Next <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- STEP 2 — Service Availed                -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="step" id="step2">
+        <div class="step-title"><i class="fa fa-list-check"></i> Service Availed</div>
+
+        <!-- Internal services dropdown -->
+        <div id="internalServiceWrap">
+          <div class="field-label">Service Availed (Internal) <span class="req">*</span></div>
+          <select class="field-input" id="internalService" onchange="checkOtherService()">
+            <option value="">-- Select Service --</option>
+            <option>Request of Minutes of Board Committees and Regular Board Meetings</option>
+            <option>Dissemination of Certified True Copies - Minutes of Meetings</option>
+            <option>Dissemination of Certified True Copies - Directives of the Governing Board</option>
+            <option>Dissemination of Certified True Copies - Notices</option>
+            <option>Dissemination of Certified True Copies - Board Resolutions</option>
+            <option>Request for Certificate of No Pending Administrative/Criminal Case</option>
+            <option>Order/Request for Legal Opinion/Comment</option>
+            <option>Order/Request for Drafting of Legal Instruments</option>
+            <option>Request for Legal Assistance and for Preparation of Pleadings, Motions and Affidavits</option>
+            <option>Public Assistance and Complaints Desk (PACD)</option>
+            <option>Preparation of Disbursement Vouchers (DV)</option>
+            <option>Sale of Bidding Documents</option>
+            <option>Other Internal Service Availed - Please specify in the next section</option>
+          </select>
+        </div>
+
+        <!-- External services input -->
+        <div id="externalServiceWrap" class="hidden">
+          <div class="field-label">Service Availed (External) <span class="req">*</span></div>
+          <input class="field-input" type="text" id="externalService" placeholder="Describe the external service availed">
+        </div>
+
+        <!-- Other service specification -->
+        <div id="otherServiceWrap" class="hidden">
+          <div class="field-label">If Other Service — Kindly specify <span class="req">*</span></div>
+          <input class="field-input" type="text" id="otherServiceText" placeholder="Please specify the other service availed">
+        </div>
+
+        <div class="btn-row">
+          <button class="nav-btn btn-back" onclick="goBack(2)">
+            <i class="fa fa-arrow-left"></i> Back
+          </button>
+          <button class="nav-btn btn-next" onclick="goNext(2)">
+            Next <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- STEP 3 — CC Awareness + SQD Items       -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="step" id="step3">
+        <div class="step-title"><i class="fa fa-star-half-stroke"></i> Citizen's Charter &amp; Service Quality</div>
+
+        <!-- CC1 -->
+        <div class="sqd-row">
+          <div class="sqd-question"><span>CC1</span> Which of the following best describes your awareness of a Citizen's Charter (CC)?</div>
+          <select class="field-input" id="cc1" onchange="handleCC1()">
+            <option value="">-- Choose --</option>
+            <option value="1">1. I know what a CC is and I saw this office's CC.</option>
+            <option value="2">2. I know what a CC is but I did NOT see this office's CC.</option>
+            <option value="3">3. I learned of the CC only when I saw this office's CC.</option>
+            <option value="4">4. I do not know what a CC is and I did not see one in this office. (Answer 'N/A' on CC2 and CC3)</option>
+          </select>
+        </div>
+
+        <!-- CC2 -->
+        <div class="sqd-row">
+          <div class="sqd-question"><span>CC2</span> If aware of CC (answered 1–3 in CC1), would you say that the CC of this office was…?</div>
+          <select class="field-input" id="cc2">
+            <option value="">-- Choose --</option>
+            <option>1. Easy to see</option>
+            <option>2. Somewhat easy to see</option>
+            <option>3. Difficult to see</option>
+            <option>4. Not visible at all</option>
+            <option>5. Not applicable</option>
+          </select>
+        </div>
+
+        <!-- CC3 -->
+        <div class="sqd-row">
+          <div class="sqd-question"><span>CC3</span> If aware of CC (answered 1–3 in CC1), how much did the CC help you in your transaction?</div>
+          <select class="field-input" id="cc3">
+            <option value="">-- Choose --</option>
+            <option>1. Helped very much</option>
+            <option>2. Somewhat helped</option>
+            <option>3. Did not help</option>
+            <option>4. Not applicable</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- SQD0–SQD8 -->
+        <div id="sqdItems">
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD0</span> I am satisfied with the service that I availed.</div>
+            <select class="field-input sqd-select" id="sqd0-sel" name="sqd0">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD1</span> I spent a reasonable amount of time for my transaction.</div>
+            <select class="field-input sqd-select" id="sqd1-sel" name="sqd1">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD2</span> The office followed the transaction's requirements and steps based on the information provided.</div>
+            <select class="field-input sqd-select" id="sqd2-sel" name="sqd2">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD3</span> The steps (including payment) I needed to do for my transaction were easy and simple.</div>
+            <select class="field-input sqd-select" id="sqd3-sel" name="sqd3">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD4</span> I easily found information about my transaction from the office or its website.</div>
+            <select class="field-input sqd-select" id="sqd4-sel" name="sqd4">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD5</span> I paid a reasonable amount of fees for my transaction. <em style="opacity:.65;">(If service was free, mark 'N/A')</em></div>
+            <select class="field-input sqd-select" id="sqd5-sel" name="sqd5">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable (Free Service)</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD6</span> I feel the office was fair to everyone, or <em>"walang palakasan"</em>, during my transaction.</div>
+            <select class="field-input sqd-select" id="sqd6-sel" name="sqd6">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD7</span> I was treated courteously by the staff, and (if asked for help) the staff was helpful.</div>
+            <select class="field-input sqd-select" id="sqd7-sel" name="sqd7">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+          <div class="sqd-row">
+            <div class="sqd-question"><span>SQD8</span> I got what I needed from the government office, or (if denied) denial of request was sufficiently explained to me.</div>
+            <select class="field-input sqd-select" id="sqd8-sel" name="sqd8">
+              <option value="">-- Choose --</option>
+              <option value="Strongly Disagree">Strongly Disagree</option>
+              <option value="Disagree">Disagree</option>
+              <option value="Neither Agree nor Disagree">Neither Agree nor Disagree</option>
+              <option value="Agree">Agree</option>
+              <option value="Strongly Agree">Strongly Agree</option>
+              <option value="Not applicable">Not Applicable</option>
+            </select>
+          </div>
+
+        </div><!-- end sqdItems -->
+
+        <div class="btn-row">
+          <button class="nav-btn btn-back" onclick="goBack(3)">
+            <i class="fa fa-arrow-left"></i> Back
+          </button>
+          <button class="nav-btn btn-next" onclick="goNext(3)">
+            Next <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- STEP 4 — Overall Rating + Suggestions  -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="step" id="step4">
+        <div class="step-title"><i class="fa fa-star"></i> Overall Rating &amp; Suggestions</div>
+
+        <!-- Star rating -->
+        <div class="field-label">Overall Rating <span class="req">*</span></div>
+        <div class="radio" id="starRating">
+          <input id="rating-5" type="radio" name="rating" value="5">
+          <label for="rating-5" title="5 stars">
+            <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+          </label>
+          <input id="rating-4" type="radio" name="rating" value="4">
+          <label for="rating-4" title="4 stars">
+            <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+          </label>
+          <input id="rating-3" type="radio" name="rating" value="3">
+          <label for="rating-3" title="3 stars">
+            <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+          </label>
+          <input id="rating-2" type="radio" name="rating" value="2">
+          <label for="rating-2" title="2 stars">
+            <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+          </label>
+          <input id="rating-1" type="radio" name="rating" value="1">
+          <label for="rating-1" title="1 star">
+            <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+          </label>
+        </div>
+        <p class="rating-hint" id="ratingHint">Tap a star to rate</p>
+
+        <div class="divider"></div>
+
+        <!-- Suggestions -->
+        <div class="field-label">Suggestions for Improvement <span class="opt-badge">Optional</span></div>
+        <textarea class="field-textarea" id="comment" placeholder="Share your suggestions on how we can further improve our services..."></textarea>
+
+        <!-- Email -->
+        <div class="field-label">Email Address <span class="opt-badge">Optional</span></div>
+        <input class="field-input" type="email" id="emailAddress" placeholder="your@email.com" style="margin-top:0;">
+
+        <div class="btn-row">
+          <button class="nav-btn btn-back" onclick="goBack(4)">
+            <i class="fa fa-arrow-left"></i> Back
+          </button>
+          <button class="nav-btn btn-submit" id="submitFeedback">
+            <i class="fa fa-paper-plane"></i> Submit
+          </button>
+        </div>
+      </div>
+
+    </div><!-- end feedback-card -->
   </div>
 
-</div>
+</div><!-- end mobile-frame -->
 
-<script type="module" src="feedback-db.js"></script>
-<script defer src="/_vercel/analytics/script.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-  // ── Region → Office cascade ──
-  const officeData = {
-    ncr:      ["Office of the Administrator","Administrative and Finance Department","Human Resource Management Division","Legal Affairs Service","Research and Development Branch","Market Development Department","Coconut Extension Training Center","Technical Services Division"],
-    car:      ["PCA CAR Regional Office"],
-    region1:  ["PCA Region I Regional Office","Pangasinan Provincial Office","La Union Provincial Office","Ilocos Sur Provincial Office","Ilocos Norte Provincial Office"],
-    region2:  ["PCA Region II Regional Office","Cagayan Provincial Office","Isabela Provincial Office","Nueva Vizcaya Provincial Office","Quirino Provincial Office"],
-    region3:  ["PCA Region III Regional Office","Bataan Provincial Office","Zambales Provincial Office","Aurora Provincial Office"],
-    region4a: ["PCA Region IV-A Regional Office","Quezon Provincial Office","Laguna Provincial Office","Batangas Provincial Office","Cavite Provincial Office","Rizal Provincial Office"],
-    region4b: ["PCA Region IV-B Regional Office","Mindoro Provincial Office","Marinduque Provincial Office","Romblon Provincial Office","Palawan Provincial Office"],
-    region5:  ["PCA Region V Regional Office","Albay Provincial Office","Camarines Norte Provincial Office","Camarines Sur Provincial Office","Sorsogon Provincial Office","Masbate Provincial Office","Catanduanes Provincial Office"],
-    region6:  ["PCA Region VI Regional Office","Iloilo Provincial Office","Negros Occidental Provincial Office","Aklan Provincial Office","Capiz Provincial Office","Antique Provincial Office","Guimaras Provincial Office"],
-    region7:  ["PCA Region VII Regional Office","Cebu Provincial Office","Bohol Provincial Office","Negros Oriental Provincial Office","Siquijor Provincial Office"],
-    region8:  ["PCA Region VIII Regional Office","Leyte Provincial Office","Southern Leyte Provincial Office","Samar Provincial Office","Eastern Samar Provincial Office","Northern Samar Provincial Office","Biliran Provincial Office"],
-    region9:  ["PCA Region IX Regional Office","Zamboanga del Norte Provincial Office","Zamboanga del Sur Provincial Office","Zamboanga Sibugay Provincial Office"],
-    region10: ["PCA Region X Regional Office","Misamis Oriental Provincial Office","Bukidnon Provincial Office","Camiguin Provincial Office","Lanao del Norte Provincial Office"],
-    region11: ["PCA Region XI Regional Office","Davao del Sur Provincial Office","Davao del Norte Provincial Office","Davao Oriental Provincial Office","Davao de Oro Provincial Office"],
-    region12: ["PCA Region XII Regional Office","South Cotabato Provincial Office","Sultan Kudarat Provincial Office","Sarangani Provincial Office"],
-    region13: ["PCA Caraga Regional Office","Agusan del Norte Provincial Office","Agusan del Sur Provincial Office","Surigao del Norte Provincial Office","Surigao del Sur Provincial Office"],
-    barmm:    ["PCA BARMM Regional Office","Maguindanao Provincial Office","Basilan Provincial Office","Sulu Provincial Office","Tawi-Tawi Provincial Office"]
-  };
+  // ── Step navigation ──
+  const TOTAL_STEPS = 4;
 
-  const regionSelect = document.getElementById("regionSelect");
-  const officeSelect = document.getElementById("officeSelect");
+  function setStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    const pct = Math.round((n / TOTAL_STEPS) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('stepLabel').textContent = 'Step ' + n + ' of ' + TOTAL_STEPS;
+    document.getElementById('stepPercent').textContent = pct + '%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-  regionSelect.addEventListener("change", function () {
-    const key = this.value;
-    officeSelect.innerHTML = '<option value="">-- Select Office --</option>';
-    if (officeData[key]) {
-      officeData[key].forEach(office => {
-        const opt = document.createElement("option");
-        opt.value = office;
-        opt.textContent = office;
-        officeSelect.appendChild(opt);
-      });
-      officeSelect.disabled = false;
-    } else {
-      officeSelect.disabled = true;
+  function goBack(currentStep) {
+    if (currentStep > 1) setStep(currentStep - 1);
+  }
+
+  function goNext(currentStep) {
+    if (!validateStep(currentStep)) return;
+    setStep(currentStep + 1);
+  }
+
+  // ── Validation ──
+  function validateStep(step) {
+    if (step === 1) {
+      if (!document.getElementById('pcaOffice').value.trim()) { alert('Please specify the PCA Office being rated.'); return false; }
+      if (!document.getElementById('pcaAddress').value.trim()) { alert('Please provide the address of the PCA Office.'); return false; }
+      if (!document.getElementById('visitDate').value) { alert('Please select the date.'); return false; }
+      if (!document.querySelector('input[name="clientType"]:checked')) { alert('Please select your Client Type.'); return false; }
+      if (!document.getElementById('affiliation').value.trim()) { alert('Please enter your affiliation.'); return false; }
+      if (!document.querySelector('input[name="serviceType"]:checked')) { alert('Please select a Service Type.'); return false; }
     }
-  });
+    if (step === 2) {
+      const stype = document.querySelector('input[name="serviceType"]:checked')?.value;
+      if (stype === 'Internal') {
+        if (!document.getElementById('internalService').value) { alert('Please select the service availed.'); return false; }
+        const sel = document.getElementById('internalService').value;
+        if (sel.toLowerCase().includes('other') && !document.getElementById('otherServiceText').value.trim()) {
+          alert('Please specify the other service availed.'); return false;
+        }
+      } else if (stype === 'External') {
+        if (!document.getElementById('externalService').value.trim()) { alert('Please describe the external service availed.'); return false; }
+      }
+    }
+    if (step === 3) {
+      if (!document.getElementById('cc1').value) { alert('Please answer CC1.'); return false; }
+      if (!document.getElementById('cc2').value) { alert('Please answer CC2.'); return false; }
+      if (!document.getElementById('cc3').value) { alert('Please answer CC3.'); return false; }
+      const sqdIds = ['sqd0-sel','sqd1-sel','sqd2-sel','sqd3-sel','sqd4-sel','sqd5-sel','sqd6-sel','sqd7-sel','sqd8-sel'];
+      for (let id of sqdIds) {
+        if (!document.getElementById(id).value) {
+          alert('Please answer all SQD items.'); return false;
+        }
+      }
+    }
+    return true;
+  }
 
-  // ── Star rating hint ──
+  // ── Service type toggle ──
+  function toggleServiceType() {
+    const stype = document.querySelector('input[name="serviceType"]:checked')?.value;
+    document.getElementById('internalServiceWrap').classList.toggle('hidden', stype !== 'Internal');
+    document.getElementById('externalServiceWrap').classList.toggle('hidden', stype !== 'External');
+    document.getElementById('otherServiceWrap').classList.add('hidden');
+  }
+
+  // ── Other service ──
+  function checkOtherService() {
+    const sel = document.getElementById('internalService').value;
+    document.getElementById('otherServiceWrap').classList.toggle('hidden', !sel.toLowerCase().includes('other'));
+  }
+
+  // ── CC1 auto-set N/A ──
+  function handleCC1() {
+    const val = document.getElementById('cc1').value;
+    if (val === '4') {
+      document.getElementById('cc2').value = '5. Not applicable';
+      document.getElementById('cc3').value = '4. Not applicable';
+    }
+  }
+
+  // ── Star hint ──
   const hints = ['','Poor','Fair','Okay','Good','Excellent'];
   document.querySelectorAll('#starRating input[name="rating"]').forEach(input => {
     input.addEventListener('change', () => {
@@ -397,6 +929,84 @@
         hints[parseInt(input.value)] + ' (' + input.value + '/5)';
     });
   });
+
+  // ── Submit via Firebase (matches feedback-db.js pattern) ──
+  document.getElementById('submitFeedback').addEventListener('click', async () => {
+    if (!validateStep(4)) return;
+
+    const checkedStar = document.querySelector('#starRating input[name="rating"]:checked');
+    const rating = checkedStar ? parseInt(checkedStar.value) : 0;
+    if (rating === 0) { alert('Please select an overall rating!'); return; }
+
+    const stype = document.querySelector('input[name="serviceType"]:checked')?.value;
+    const serviceAvailed = stype === 'Internal'
+      ? document.getElementById('internalService').value
+      : document.getElementById('externalService').value;
+
+    const payload = {
+      // Step 1
+      pcaOffice:         document.getElementById('pcaOffice').value.trim(),
+      pcaAddress:        document.getElementById('pcaAddress').value.trim(),
+      visitDate:         document.getElementById('visitDate').value,
+      clientType:        document.querySelector('input[name="clientType"]:checked')?.value || '',
+      fullName:          document.getElementById('fullName').value.trim(),
+      dob:               document.getElementById('dob').value,
+      sex:               document.getElementById('sex').value,
+      residenceAddress:  document.getElementById('residenceAddress').value.trim(),
+      regionOfResidence: document.getElementById('regionOfResidence').value,
+      affiliation:       document.getElementById('affiliation').value.trim(),
+      serviceType:       stype || '',
+      // Step 2
+      serviceAvailed,
+      otherService:      document.getElementById('otherServiceText').value.trim(),
+      // Step 3 – CC
+      cc1: document.getElementById('cc1').value,
+      cc2: document.getElementById('cc2').value,
+      cc3: document.getElementById('cc3').value,
+      // Step 3 – SQD
+      sqd0: document.getElementById('sqd0-sel').value,
+      sqd1: document.getElementById('sqd1-sel').value,
+      sqd2: document.getElementById('sqd2-sel').value,
+      sqd3: document.getElementById('sqd3-sel').value,
+      sqd4: document.getElementById('sqd4-sel').value,
+      sqd5: document.getElementById('sqd5-sel').value,
+      sqd6: document.getElementById('sqd6-sel').value,
+      sqd7: document.getElementById('sqd7-sel').value,
+      sqd8: document.getElementById('sqd8-sel').value,
+      // Step 4
+      rating,
+      comment:      document.getElementById('comment').value.trim(),
+      emailAddress: document.getElementById('emailAddress').value.trim(),
+      timestamp:    firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+      await firebase.firestore().collection('feedbacks').add(payload);
+      alert('Feedback submitted! Thank you.');
+      location.href = 'index.html';
+    } catch (err) {
+      console.error(err);
+      alert('Error submitting feedback, please try again.');
+    }
+  });
 </script>
+
+<!-- Firebase config (keep your existing config in feedback-db.js or inline below) -->
+<script>
+  // Initialise Firebase using compat SDK (matches the firebase-app.js v8 CDN above)
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "SECRET",
+      authDomain: "pca-website-d2552.firebaseapp.com",
+      projectId: "pca-website-d2552",
+      storageBucket: "pca-website-d2552.firebasestorage.app",
+      messagingSenderId: "444810419373",
+      appId: "1:444810419373:web:a5820613bd89fa7079fa24",
+      measurementId: "G-E97QRFDBVB"
+    });
+  }
+</script>
+
+<script defer src="/_vercel/analytics/script.js"></script>
 </body>
 </html>

@@ -16,8 +16,8 @@ const db = firebase.firestore();
 var allSubmissions  = [];
 var allFeedbacks    = [];
 var activeSubTab    = 'all';
-var activeFilters   = { rating: 'all', region: 'all', office: 'all' };
-var pendingFilters  = { rating: 'all', region: 'all', office: 'all' };
+var activeFilters   = { rating: 'all', clientType: 'all', serviceType: 'all', office: 'all' };
+var pendingFilters  = { rating: 'all', clientType: 'all', serviceType: 'all', office: 'all' };
 var selectedIds     = new Set(); // doc IDs currently checked
 var pdfStore        = {};        // maps element id -> pdf data URL or https URL
 
@@ -329,7 +329,10 @@ function makeCard(fields, deleteArgs) {
   });
   var actions = document.createElement('div');
   actions.className = 'card-actions';
-  actions.innerHTML = '<button class="action-btn delete-btn" onclick="deleteRecord(\'' + deleteArgs.collection + '\',\'' + deleteArgs.id + '\',\'' + deleteArgs.tab + '\')">Delete</button>';
+  if (deleteArgs.viewId) {
+    actions.innerHTML += '<button class="action-btn view-btn" onclick="openFeedbackDetail(\'' + deleteArgs.viewId + '\')">👁 View</button>';
+  }
+  actions.innerHTML += '<button class="action-btn delete-btn" onclick="deleteRecord(\'' + deleteArgs.collection + '\',\'' + deleteArgs.id + '\',\'' + deleteArgs.tab + '\')">Delete</button>';
   card.appendChild(actions);
   return card;
 }
@@ -361,25 +364,23 @@ async function loadSubmissions() {
 async function loadFeedbacks() {
   var tbody = document.querySelector('#feedbacksTable tbody');
   var cards = document.getElementById('feedbacksCards');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:20px">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#888;padding:20px">Loading...</td></tr>';
   cards.innerHTML = '<div class="card" style="text-align:center;color:#888">Loading...</div>';
   try {
     var snapshot = await db.collection('feedbacks').orderBy('timestamp', 'desc').get();
     allFeedbacks = [];
-    var regions = new Set();
     var offices = new Set();
     snapshot.forEach(function(doc) {
       var d = doc.data();
       allFeedbacks.push({ id: doc.id, d: d });
-      if (d.region) regions.add(d.region);
-      if (d.office) offices.add(d.office);
+      if (d.pcaOffice) offices.add(d.pcaOffice);
+      // backward-compat: old docs used d.office
+      else if (d.office) offices.add(d.office);
     });
-    buildFilterChips('ratingChips', ['5 ⭐', '4 ⭐', '3 ⭐', '2 ⭐', '1 ⭐'], ['5','4','3','2','1']);
-    buildFilterChips('regionChips', Array.from(regions).sort());
     buildFilterChips('officeChips', Array.from(offices).sort());
     renderFeedbacks();
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#c00;padding:20px">Error: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#c00;padding:20px">Error: ' + err.message + '</td></tr>';
     cards.innerHTML = '<div class="card" style="color:#c00">Error: ' + err.message + '</div>';
     console.error('loadFeedbacks error:', err);
   }
@@ -387,6 +388,7 @@ async function loadFeedbacks() {
 
 function buildFilterChips(containerId, labels, vals) {
   var container = document.getElementById(containerId);
+  if (!container) return;
   container.innerHTML = '<span class="filter-chip active" data-val="all">All</span>';
   labels.forEach(function(label, i) {
     var chip = document.createElement('span');
@@ -397,11 +399,40 @@ function buildFilterChips(containerId, labels, vals) {
     chip.addEventListener('click', function() {
       container.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
       chip.classList.add('active');
-      if (containerId === 'ratingChips') pendingFilters.rating = chip.dataset.val;
-      if (containerId === 'regionChips') pendingFilters.region = chip.dataset.val;
-      if (containerId === 'officeChips') pendingFilters.office = chip.dataset.val;
+      if (containerId === 'ratingChips')      pendingFilters.rating      = chip.dataset.val;
+      if (containerId === 'clientTypeChips')  pendingFilters.clientType  = chip.dataset.val;
+      if (containerId === 'serviceTypeChips') pendingFilters.serviceType = chip.dataset.val;
+      if (containerId === 'officeChips')      pendingFilters.office      = chip.dataset.val;
     });
   });
+}
+
+/* Helper: compute average of SQD0-SQD8 answers */
+function sqdAverage(d) {
+  var map = { 'Strongly Disagree': 1, 'Disagree': 2, 'Neither Agree nor Disagree': 3, 'Agree': 4, 'Strongly Agree': 5 };
+  var total = 0; var count = 0;
+  ['sqd0','sqd1','sqd2','sqd3','sqd4','sqd5','sqd6','sqd7','sqd8'].forEach(function(k) {
+    var v = map[d[k]];
+    if (v) { total += v; count++; }
+  });
+  return count ? (total / count).toFixed(1) : '—';
+}
+
+function sqdBadge(avg) {
+  if (avg === '—') return '<span style="color:#aaa">—</span>';
+  var n = parseFloat(avg);
+  var color = n >= 4.5 ? '#1b5e20' : n >= 3.5 ? '#0d47a1' : n >= 2.5 ? '#e65100' : '#b71c1c';
+  var bg    = n >= 4.5 ? '#e8f5e9' : n >= 3.5 ? '#e3f2fd' : n >= 2.5 ? '#fff3e0' : '#fce4ec';
+  return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;">' + avg + '</span>';
+}
+
+function starsHtml(rating) {
+  if (!rating) return '<span style="color:#aaa">—</span>';
+  var n = Number(rating);
+  var colors = ['','#c62828','#e65100','#f9a825','#2e7d32','#1b5e20'];
+  var labels = ['','Poor','Fair','Okay','Good','Excellent'];
+  return '<span style="color:' + (colors[n]||'#888') + ';font-weight:700;">' +
+    '⭐'.repeat(n) + ' <small>' + (labels[n]||'') + '</small></span>';
 }
 
 function renderFeedbacks() {
@@ -412,45 +443,77 @@ function renderFeedbacks() {
 
   var filtered = allFeedbacks.filter(function(item) {
     var d = item.d;
-    if (activeFilters.rating !== 'all' && String(d.rating) !== activeFilters.rating) return false;
-    if (activeFilters.region !== 'all' && d.region !== activeFilters.region)          return false;
-    if (activeFilters.office !== 'all' && d.office !== activeFilters.office)          return false;
+    if (activeFilters.rating      !== 'all' && String(d.rating) !== activeFilters.rating)            return false;
+    if (activeFilters.clientType  !== 'all' && d.clientType  !== activeFilters.clientType)  return false;
+    if (activeFilters.serviceType !== 'all' && d.serviceType !== activeFilters.serviceType) return false;
+    if (activeFilters.office      !== 'all' && (d.pcaOffice || d.office) !== activeFilters.office)      return false;
     return true;
   });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:20px">No feedbacks match your filters.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#888;padding:20px">No feedbacks match your filters.</td></tr>';
     cards.innerHTML = '<div class="card" style="text-align:center;color:#888">No feedbacks match your filters.</div>';
+    updateFilterBtnState();
     return;
   }
 
   filtered.forEach(function(item) {
-    var d     = item.d;
-    var docId = item.id;
+    var d       = item.d;
+    var docId   = item.id;
     var dateStr = formatDate(d.timestamp);
-    var stars   = d.rating ? String('⭐').repeat(Number(d.rating)) : '';
+    var office  = d.pcaOffice || d.office || '—';
+    var svcType = d.serviceType || '—';
+    var svcAvailed = d.serviceAvailed || '—';
+    var clientType = d.clientType || '—';
+    var comment = d.comment || '';
+    var avg     = sqdAverage(d);
+
+    // truncate long service name for table
+    var svcShort = svcAvailed.length > 40 ? svcAvailed.substring(0, 38) + '…' : svcAvailed;
+    var commentShort = comment.length > 60 ? comment.substring(0, 58) + '…' : comment;
+
+    var svcTypeBadge = svcType === 'Internal'
+      ? '<span style="background:#e8f5e9;color:#1b5e20;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">Internal</span>'
+      : svcType === 'External'
+        ? '<span style="background:#e3f2fd;color:#0d47a1;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">External</span>'
+        : '<span style="color:#aaa">—</span>';
 
     var tr = document.createElement('tr');
-    tr.dataset.search = [d.office, d.region, d.rating, d.comment, dateStr].join(' ').toLowerCase();
+    tr.dataset.search = [office, clientType, svcType, svcAvailed, d.rating, comment, dateStr].join(' ').toLowerCase();
     tr.innerHTML =
-      '<td>' + (d.office  || '') + '</td>' +
-      '<td>' + (d.region  || '') + '</td>' +
-      '<td>' + stars             + '</td>' +
-      '<td>' + (d.comment || '') + '</td>' +
-      '<td>' + dateStr           + '</td>' +
-      '<td><button class="action-btn delete-btn" onclick="deleteRecord(\'feedbacks\',\'' + docId + '\',\'feedbacks\')">Delete</button></td>';
+      '<td style="white-space:nowrap">' + dateStr + '</td>' +
+      '<td>' + escHtml(office) + '</td>' +
+      '<td>' + escHtml(clientType) + '</td>' +
+      '<td>' + svcTypeBadge + '</td>' +
+      '<td title="' + escHtml(svcAvailed) + '">' + escHtml(svcShort) + '</td>' +
+      '<td>' + starsHtml(d.rating) + '</td>' +
+      '<td style="text-align:center">' + sqdBadge(avg) + '</td>' +
+      '<td style="max-width:220px" title="' + escHtml(comment) + '">' + escHtml(commentShort) + '</td>' +
+      '<td style="white-space:nowrap"><div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<button class="action-btn view-btn" onclick="openFeedbackDetail(\'' + docId + '\')">👁 View</button>' +
+        '<button class="action-btn delete-btn" onclick="deleteRecord(\'feedbacks\',\'' + docId + '\',\'feedbacks\')">Delete</button>' +
+      '</div></td>';
     tbody.appendChild(tr);
 
+    // ── MOBILE CARD ──
     cards.appendChild(makeCard([
-      { label: 'Office',  value: d.office  },
-      { label: 'Region',  value: d.region  },
-      { label: 'Rating',  value: stars     },
-      { label: 'Comment', value: d.comment },
-      { label: 'Date',    value: dateStr   },
-    ], { collection: 'feedbacks', id: docId, tab: 'feedbacks' }));
+      { label: 'Date',          value: dateStr },
+      { label: 'PCA Office',    value: office },
+      { label: 'Client Type',   value: clientType },
+      { label: 'Service Type',  value: svcType },
+      { label: 'Service',       value: svcAvailed },
+      { label: 'Overall ⭐',    value: starsHtml(d.rating), isHtml: true },
+      { label: 'SQD Avg',       value: sqdBadge(avg), isHtml: true },
+      { label: 'Comment',       value: comment },
+    ], { collection: 'feedbacks', id: docId, tab: 'feedbacks', viewId: docId }));
   });
 
   updateFilterBtnState();
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ─────────────────────────────────────────
@@ -480,9 +543,10 @@ function closeFilterPopup(e) {
 }
 
 function syncChipsToState() {
-  syncGroup('ratingChips', pendingFilters.rating);
-  syncGroup('regionChips', pendingFilters.region);
-  syncGroup('officeChips', pendingFilters.office);
+  syncGroup('ratingChips',      pendingFilters.rating);
+  syncGroup('clientTypeChips',  pendingFilters.clientType);
+  syncGroup('serviceTypeChips', pendingFilters.serviceType);
+  syncGroup('officeChips',      pendingFilters.office);
 }
 
 function syncGroup(containerId, activeVal) {
@@ -500,14 +564,14 @@ function applyFilters() {
 }
 
 function clearFilters() {
-  pendingFilters = { rating: 'all', region: 'all', office: 'all' };
+  pendingFilters = { rating: 'all', clientType: 'all', serviceType: 'all', office: 'all' };
   syncChipsToState();
 }
 
 function updateFilterBtnState() {
   var btn = document.getElementById('filterToggleBtn');
   if (!btn) return;
-  var count = [activeFilters.rating, activeFilters.region, activeFilters.office]
+  var count = [activeFilters.rating, activeFilters.clientType, activeFilters.serviceType, activeFilters.office]
     .filter(function(v) { return v !== 'all'; }).length;
   btn.classList.toggle('has-filter', count > 0);
   var textNode = btn.lastChild;
@@ -576,6 +640,84 @@ function openPdf(id) {
   var url  = URL.createObjectURL(blob);
   window.open(url, '_blank');
   setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
+}
+
+/* ─────────────────────────────────────────
+   FEEDBACK DETAIL MODAL
+───────────────────────────────────────── */
+function openFeedbackDetail(docId) {
+  var item = allFeedbacks.find(function(f) { return f.id === docId; });
+  if (!item) return;
+  var d = item.d;
+
+  var sqdLabels = [
+    'SQD0 – Timeliness',
+    'SQD1 – Processing time awareness',
+    'SQD2 – Proper information given',
+    'SQD3 – Steps were simple',
+    'SQD4 – Walk-through provided',
+    'SQD5 – Staff made things easy',
+    'SQD6 – No additional documents asked',
+    'SQD7 – No extra payment required',
+    'SQD8 – Dignified and respectful'
+  ];
+
+  function row(label, value) {
+    if (!value && value !== 0) value = '—';
+    return '<tr>' +
+      '<td style="font-weight:700;color:#0d6d05;width:42%;padding:8px 10px;border:1px solid #e0e0e0;font-size:13px;vertical-align:top;white-space:nowrap">' + escHtml(label) + '</td>' +
+      '<td style="padding:8px 10px;border:1px solid #e0e0e0;font-size:13px;color:#222;word-break:break-word">' + escHtml(String(value)) + '</td>' +
+    '</tr>';
+  }
+
+  function section(title) {
+    return '<tr><td colspan="2" style="background:#0d6d05;color:white;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;padding:7px 10px;border:1px solid #0d6d05">' + title + '</td></tr>';
+  }
+
+  var avg = sqdAverage(d);
+  var sqdRows = sqdLabels.map(function(lbl, i) { return row(lbl, d['sqd' + i]); }).join('');
+
+  var html =
+    '<table style="width:100%;border-collapse:collapse">' +
+      section('📍 Office & Visit Info') +
+      row('PCA Office',          d.pcaOffice || d.office) +
+      row('PCA Address',         d.pcaAddress) +
+      row('Visit Date',          d.visitDate) +
+      row('Submitted',           formatDate(d.timestamp)) +
+      section('👤 Client Information') +
+      row('Full Name',           d.fullName) +
+      row('Date of Birth',       d.dob) +
+      row('Sex',                 d.sex) +
+      row('Residence Address',   d.residenceAddress) +
+      row('Region of Residence', d.regionOfResidence) +
+      row('Affiliation',         d.affiliation) +
+      row('Email Address',       d.emailAddress) +
+      row('Client Type',         d.clientType) +
+      section('🛠 Service Details') +
+      row('Service Type',        d.serviceType) +
+      row('Service Availed',     d.serviceAvailed) +
+      row('Other Service',       d.otherService) +
+      section('📋 Citizen\'s Charter (CC)') +
+      row('CC1 – Aware of CC',   d.cc1) +
+      row('CC2 – CC easily found', d.cc2) +
+      row('CC3 – CC requirements', d.cc3) +
+      section('📊 Service Quality Dimensions (SQD)') +
+      sqdRows +
+      row('SQD Average', avg) +
+      section('⭐ Overall Rating & Feedback') +
+      row('Overall Rating',      d.rating ? d.rating + ' / 5' : '—') +
+      row('Comment / Suggestion', d.comment) +
+    '</table>';
+
+  var modal = document.getElementById('feedbackDetailModal');
+  document.getElementById('feedbackDetailBody').innerHTML = html;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFeedbackDetail() {
+  document.getElementById('feedbackDetailModal').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 /* ─────────────────────────────────────────

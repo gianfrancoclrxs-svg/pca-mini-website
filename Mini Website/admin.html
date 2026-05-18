@@ -388,6 +388,64 @@
     section { padding: 12px; }
     .filter-popup { min-width: 220px; }
   }
+  /* ── VIEW BUTTON ── */
+  .view-btn { background: #0d6d05; color: white; }
+
+  /* ── FEEDBACK DETAIL MODAL ── */
+  #feedbackDetailModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: rgba(0,0,0,0.55);
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .fdm-box {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.28);
+    width: 100%;
+    max-width: 680px;
+    margin: auto;
+    overflow: hidden;
+    position: relative;
+  }
+  .fdm-header {
+    background: #0d6d05;
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .fdm-title { font-size: 16px; font-weight: 700; }
+  .fdm-close {
+    background: rgba(255,255,255,0.18);
+    border: none;
+    color: white;
+    font-size: 20px;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .fdm-close:hover { background: rgba(255,255,255,0.32); }
+  .fdm-body {
+    padding: 16px;
+    overflow-y: auto;
+    max-height: calc(90vh - 60px);
+  }
+  @media (max-width: 640px) {
+    #feedbackDetailModal { padding: 0; align-items: flex-end; }
+    .fdm-box { border-radius: 18px 18px 0 0; max-width: 100%; }
+    .fdm-body { max-height: 80vh; }
+  }
 </style>
 </head>
 <body>
@@ -462,9 +520,21 @@
       </div>
 
       <div class="filter-group">
-        <div class="filter-group-label">Region</div>
-        <div class="filter-chips" id="regionChips">
+        <div class="filter-group-label">Client Type</div>
+        <div class="filter-chips" id="clientTypeChips">
           <span class="filter-chip active" data-val="all">All</span>
+          <span class="filter-chip" data-val="Citizen">Citizen</span>
+          <span class="filter-chip" data-val="Business">Business</span>
+          <span class="filter-chip" data-val="Government Employee">Govt. Employee</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-label">Service Type</div>
+        <div class="filter-chips" id="serviceTypeChips">
+          <span class="filter-chip active" data-val="all">All</span>
+          <span class="filter-chip" data-val="Internal">Internal</span>
+          <span class="filter-chip" data-val="External">External</span>
         </div>
       </div>
 
@@ -486,8 +556,15 @@
     <table id="feedbacksTable">
       <thead>
         <tr>
-          <th>Office</th><th>Region</th><th>Rating</th>
-          <th>Comment</th><th>Date</th><th>Actions</th>
+          <th>Date</th>
+          <th>PCA Office</th>
+          <th>Client Type</th>
+          <th>Service Type</th>
+          <th>Service Availed</th>
+          <th>Rating ⭐</th>
+          <th>SQD Avg</th>
+          <th>Comment</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -495,6 +572,17 @@
   </div>
   <div class="card-list" id="feedbacksCards"></div>
 </section>
+
+<!-- ══ FEEDBACK DETAIL MODAL ══ -->
+<div id="feedbackDetailModal" onclick="if(event.target===this)closeFeedbackDetail()">
+  <div class="fdm-box">
+    <div class="fdm-header">
+      <span class="fdm-title">📄 Full Feedback Record</span>
+      <button class="fdm-close" onclick="closeFeedbackDetail()">✕</button>
+    </div>
+    <div class="fdm-body" id="feedbackDetailBody"></div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
